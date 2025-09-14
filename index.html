@@ -1,5 +1,73 @@
 <!doctype html>
-<meta charset="utf-8">
-<title>Test</title>
-<h1 style="font-family:system-ui">Hello from Cullen Report</h1>
-<p>If you can read this, GitHub Pages is working.</p>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Cullen Project — Visual Guide</title>
+<style>
+  :root{ --bg:#0b0f19; --card:#121827; --text:#e5e7eb; --muted:#9aa4b2; --accent:#60a5fa; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
+  header{margin-bottom:18px}
+  h1{font-size:clamp(24px,4vw,34px);margin:0 0 6px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .card{background:var(--card);border-radius:16px;padding:16px;display:flex;flex-direction:column;justify-content:space-between}
+  .card h3{margin:0 0 8px;font-size:18px}
+  .card p{margin:0 0 12px;color:var(--muted)}
+  .pill{display:inline-block;background:#0e1526;color:var(--text);padding:8px 12px;border-radius:999px;text-decoration:none;border:1px solid #1f2937}
+  .pill:hover{border-color:#334155}
+  footer{margin-top:20px;color:var(--muted);font-size:14px}
+  .sources{margin-top:22px;background:#0e1526;border-radius:16px;padding:16px}
+  .sources h4{margin:0 0 8px}
+  .sources ul{margin:0;padding-left:18px;line-height:1.5}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>The Cullen Project — Visual Guide</h1>
+      <p class="sub">Simple charts that explain the key numbers behind BC’s Cullen Commission on money laundering.</p>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <div>
+          <h3>Reporting Volume: Canada vs US vs UK</h3>
+          <p>How many financial transaction reports are filed in each country (2019–20)?</p>
+        </div>
+        <div><a class="pill" href="cullen-reports-comparison.html">Open chart</a></div>
+      </article>
+
+      <article class="card">
+        <div>
+          <h3>What Canada Actually Files</h3>
+          <p>Breakdown by type: electronic transfers (EFTR), large cash (LCTR), suspicious (STR), casino, cross-border (2018–19).</p>
+        </div>
+        <div><a class="pill" href="fintrac-report-types.html">Open charts</a></div>
+      </article>
+
+      <article class="card">
+        <div>
+          <h3>From Firehose to Drip</h3>
+          <p>Only 0.0067% of all reports became police disclosures (2018–19); 17.5% of those went to BC.</p>
+        </div>
+        <div><a class="pill" href="fintrac-disclosure-ratios.html">Open donuts</a></div>
+      </article>
+    </section>
+
+    <section class="sources">
+      <h4>Sources & Notes</h4>
+      <ul>
+        <li><em>Cullen Commission (BC)</em> — Final Report & Interim Report (FINTRAC totals and disclosures).</li>
+        <li>Scope differs by country: Canada/US count multiple report types; UK counts SARs only. Always read footnotes on each page.</li>
+      </ul>
+    </section>
+
+    <footer>© <span id="year"></span> Dominica Uhlmann • Project site</footer>
+  </div>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
