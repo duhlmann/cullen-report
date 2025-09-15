@@ -33,8 +33,6 @@
 <body>
   <div class="wrap">
     <h1>Cullen Commission — 101 Recommendations Tracker</h1>
-    <p style="border:2px dashed orange; padding:6px; margin:10px 0;">TRACKER MARKER vB1</p>
-   
     <p>Hover or focus a box to see the full recommendation text, status, and sources. Gray = not yet verified from public sources.</p>
 
     <div class="card">
@@ -157,46 +155,10 @@
   cell.textContent = '1';
   cell.setAttribute('tabindex','0');
 
+
 <script>
-  // DIAGNOSTIC: do we see the grid? can we write into it?
   const grid = document.getElementById('grid');
-
-  if (!grid) {
-    alert('Grid NOT found'); // we’ll see this if the <div id="grid"> isn’t in the DOM
-  } else {
-    // make the grid visible so we can’t miss it
-    grid.style.border = '2px solid red';
-    grid.style.minHeight = '80px';
-    grid.style.padding = '6px';
-
-    // try writing a simple green box
-    grid.innerHTML = '<div style="width:40px;height:40px;background:green;margin:4px;">1</div>';
-
-    alert('Grid found and cell inserted');
-  }
-</script>
-  <script>
-  document.title = "Cullen Tracker — JS OK (bottom)";
-  const gridEl = document.getElementById('grid');
-  if (gridEl) {
-    gridEl.style.border = "2px solid red";
-    gridEl.innerHTML = '<div style="width:40px;height:40px;background:green;margin:4px;display:inline-block">1</div>';
-  }
-</script>
- <script>
-  const grid = document.getElementById('grid');
-  if (!grid) {
-    alert("❌ No element with id='grid' was found");
-  } else {
-    alert("✅ Found grid element!");
-    grid.style.border = "3px solid red";
-    grid.innerHTML = "Hello from JS";
-  }
+  grid.innerHTML = '<div style="width:40px; height:40px; background:green; margin:2px;">1</div>';
 </script>
 </body>
-</html>
-
-
-
-
-  
+</html>       
