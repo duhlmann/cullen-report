@@ -155,10 +155,28 @@
   cell.textContent = '1';
   cell.setAttribute('tabindex','0');
 
-
 <script>
+  // DIAGNOSTIC: do we see the grid? can we write into it?
   const grid = document.getElementById('grid');
-  grid.innerHTML = '<div style="width:40px; height:40px; background:green; margin:2px;">1</div>';
+
+  if (!grid) {
+    alert('Grid NOT found'); // we’ll see this if the <div id="grid"> isn’t in the DOM
+  } else {
+    // make the grid visible so we can’t miss it
+    grid.style.border = '2px solid red';
+    grid.style.minHeight = '80px';
+    grid.style.padding = '6px';
+
+    // try writing a simple green box
+    grid.innerHTML = '<div style="width:40px;height:40px;background:green;margin:4px;">1</div>';
+
+    alert('Grid found and cell inserted');
+  }
 </script>
 </body>
-</html>       
+</html>
+
+
+
+
+  
