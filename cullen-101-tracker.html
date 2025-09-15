@@ -17,6 +17,7 @@
       --tooltip:#111827; /* tooltip bg */
       --tooltip-text:#e5e7eb;
       --tooltip-shadow: 0 8px 24px rgba(0,0,0,.35);
+      --link:#93c5fd;
     }
     html,body{margin:0;background:var(--bg);color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
@@ -43,7 +44,7 @@
     .tooltip {
       position: fixed;
       z-index: 9999;
-      max-width: min(420px, 90vw);
+      max-width: min(520px, 92vw);
       background: var(--tooltip);
       color: var(--tooltip-text);
       padding: 10px 12px;
@@ -54,13 +55,18 @@
       display: none; /* hidden by default */
       pointer-events: none;
     }
-    .tooltip .status {opacity:.8; font-style: italic; display:block; margin-top:4px}
+    .tooltip strong { font-weight:600 }
+    .tooltip .status {opacity:.9; font-style: italic; display:block; margin-top:6px}
+    .tooltip .sources { margin-top:8px; border-top:1px solid rgba(255,255,255,.08); padding-top:6px }
+    .tooltip .sources-title { font-size:11px; opacity:.8; margin-bottom:4px; display:block }
+    .tooltip .sources ul { margin:0; padding-left:16px }
+    .tooltip a { color: var(--link); text-decoration: underline; word-break: break-word }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Cullen Commission — 101 Recommendations Tracker</h1>
-    <p>Hover or focus a box to see the full recommendation text + its status. Gray = not yet verified from public sources.</p>
+    <p>Hover or focus a box to see the full recommendation text, status, and sources. Gray = not yet verified from public sources.</p>
 
     <div class="card">
       <div class="legend" aria-hidden="true">
@@ -72,7 +78,7 @@
 
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
       <div class="note">
-        We only color items where we’ve found solid public sources. Everything else stays gray until verified.
+        We only color items where we’ve found solid sources (province/federal/LSBC/CPABC). Everything else stays gray until verified.
       </div>
     </div>
   </div>
@@ -269,12 +275,92 @@
       101:"done"
     };
 
-    /* --- BUILD GRID --- */
+    /* --- SOURCES PER RECOMMENDATION ---
+       Put one or more strings per rec. You can include titles and/or URLs.
+       Examples below use plain text (safe). If you want clickable links,
+       include full URLs; the tooltip will auto-link them.
+    */
+    const sourcesByRec = {
+      33: [
+        "BC Gov – Quick Glance: Real Estate (LOTR fees removed)"
+      ],
+      25: [
+        "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)"
+      ],
+      14: ["BCFSA – Mortgage Services Act (in force Oct 13, 2026)"],
+      15: ["BCFSA – MSA suitability/background checks"],
+      16: ["BCFSA – MSA reporting/returns framework"],
+      17: ["BCFSA – MSA rule-making authority"],
+      18: ["BCFSA – MSA managing/principal broker role"],
+      19: ["BCFSA – MSA competency/education requirements"],
+      20: ["BCFSA – MSA penalties"],
+      22: ["BCFSA – MSA unregistered brokering enforcement"],
+      23: ["BCFSA – MSA appeals/discipline modernization"],
+      26: ["BC Gov – Real Estate: PCMLTFA coverage imposes source-of-funds duties"],
+      29: ["BCFSA – MSA licensing for private mortgage lenders"],
+
+      5:  ["BC Gov – Gambling: known-play roadmap to 2029; ID at entry"],
+      4:  ["BC Gov – Gambling: SOF threshold still $10,000 (Cullen asked $3,000)"],
+
+      51: ["BC Gov – Financial Sector: MSB Act introduced (in force by regulation)"],
+      85: ["BC Gov – Financial Sector: PST export-vehicle refund loophole closed"],
+
+      91: ["BC Gov – Public Safety: Superintendence & Evaluation Unit created"],
+      63: ["BC Gov – Public Safety: LSBC referrals strengthened"],
+      64: ["BC Gov – Public Safety: LSBC evidence-sharing process"],
+      65: ["BC Gov – Public Safety: public awareness on oversight"],
+
+      55: ["LSBC – Rule 3-59 cash exception revision process"],
+      56: ["LSBC – Client ID/source-of-money guidance updates"],
+      58: ["LSBC – Advisory clarifying Rule 3-58.1 (‘directly related’)"],
+      62: ["LSBC – Tabled AML training for high-risk lawyers"],
+
+      66: ["BC Gov – Lawyers/Notaries: Legal Professions Act (notaries’ fines to $250k)"],
+      67: ["FINTRAC/BC Notaries – SOF documentation obligations"],
+      68: ["BC Notaries – AML training offerings"],
+
+      69: ["CPABC Code – Rule on reporting FINTRAC non-compliance"],
+      70: ["BC Gov – Professions: sector analysis of non-CPABC financial pros"],
+      71: ["PCMLTFA – accountants as reporting entities"],
+      72: ["CPABC Rule 219 – Client ID/verification & SOF"],
+      73: ["CPABC Practice Review – trust account usage reviews"],
+      74: ["CPABC Practice Review – sampling (incl. trust accounts)"],
+      75: ["CPABC Discipline/Review – cash acceptance oversight"],
+      77: ["CPABC – declarations re: PCMLTFA-regulated activities"],
+      78: ["CPABC Practice Review – AML compliance integrated"],
+      79: ["CPABC – AML professional development programs"],
+      80: ["CPABC – liaison with FINTRAC"],
+      81: ["CPABC – cooperation with law enforcement"],
+
+      89: ["BC Gov – Public Safety: police to consider ML at outset"],
+      90: ["BC Gov – Public Safety: ML/asset-seizure training modules"],
+      94: ["BC Gov – Public Safety: CFSEU resourcing"],
+      96: ["BC Gov – Public Safety: police to consider civil forfeiture"],
+      98: ["BC Gov – Public Safety: criminal forfeiture training"],
+      99: ["BC Gov – Public Safety/Civil Forfeiture: CFO capacity expanded"],
+      100:["BC Gov – Public Safety: CFO on government budget model"],
+      101:["BC Gov – Civil Forfeiture: Unexplained Wealth Orders enacted/used"],
+
+      52: ["BC Gov – Corporate ownership transparency; federal registry note"],
+
+      // Unknown items intentionally have no sources; tooltip will say “not yet verified”.
+    };
+
+    /* --- BUILD GRID + TOOLTIP --- */
     const grid = document.getElementById('grid');
     const tooltip = document.getElementById('tooltip');
 
-    function showTooltip(target, text) {
-      tooltip.innerHTML = text;
+    function autoLink(text){
+      // turns bare URLs into <a href="...">...</a>
+      const urlRegex = /(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
+      return text.replace(urlRegex, (m) => {
+        const url = m.startsWith('http') ? m : `https://${m}`;
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`;
+      });
+    }
+
+    function showTooltip(target, html) {
+      tooltip.innerHTML = html;
       tooltip.style.display = 'block';
       tooltip.setAttribute('aria-hidden', 'false');
 
@@ -282,21 +368,18 @@
       const padding = 8;
       const ttRect = tooltip.getBoundingClientRect();
 
-      // Position above the cell; if not enough space, place below
       let top = rect.top - ttRect.height - padding;
       if (top < 8) top = rect.bottom + padding;
 
-      // Center horizontally; clamp to viewport
       let left = rect.left + (rect.width - ttRect.width)/2;
       left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
 
       tooltip.style.top = `${top + window.scrollY}px`;
       tooltip.style.left = `${left + window.scrollX}px`;
     }
-
-    function hideTooltip() {
+    function hideTooltip(){
       tooltip.style.display = 'none';
-      tooltip.setAttribute('aria-hidden', 'true');
+      tooltip.setAttribute('aria-hidden','true');
       tooltip.innerHTML = '';
     }
 
@@ -316,7 +399,18 @@
         'Unknown / Unverified';
 
       const recText = recommendations[n-1] || `Recommendation ${n}`;
-      const tipHTML = `<strong>${recText}</strong><span class="status">Status: ${label}</span>`;
+
+      // Build sources list for this rec, if any
+      const src = sourcesByRec[n];
+      let sourcesHTML = '';
+      if (status === 'unknown' || !src || src.length === 0) {
+        sourcesHTML = `<div class="sources"><span class="sources-title">Source</span><ul><li>Not yet verified</li></ul></div>`;
+      } else {
+        const items = src.map(s => `<li>${autoLink(s)}</li>`).join('');
+        sourcesHTML = `<div class="sources"><span class="sources-title">Sources</span><ul>${items}</ul></div>`;
+      }
+
+      const tipHTML = `<strong>${recText}</strong><span class="status">Status: ${label}</span>${sourcesHTML}`;
 
       // mouse
       cell.addEventListener('mouseenter', () => showTooltip(cell, tipHTML));
@@ -333,7 +427,7 @@
       grid.appendChild(cell);
     }
 
-    // hide tooltip on scroll/resize/escape
+    // close tooltip on scroll/resize/escape/tap outside
     window.addEventListener('scroll', hideTooltip, {passive:true});
     window.addEventListener('resize', hideTooltip);
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
@@ -343,8 +437,3 @@
   </script>
 </body>
 </html>
-
-     
-
-  
-     
