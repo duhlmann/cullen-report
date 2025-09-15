@@ -155,8 +155,10 @@
   cell.textContent = '1';
   cell.setAttribute('tabindex','0');
 
-grid.appendChild(cell);
+
+<script>
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '<div style="width:40px; height:40px; background:green; margin:2px;">1</div>';
 </script>
 </body>
-</html>
-       
+</html>       
