@@ -272,82 +272,86 @@
     };
 
     /* --- Tooltip helpers --- */
-    const grid = document.getElementById('grid');
-    const tooltip = document.getElementById('tooltip');
+   const grid = document.getElementById('grid');
+const tooltip = document.getElementById('tooltip');
 
-    function autoLink(text){
-      const urlRegex=/(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
-      return text.replace(urlRegex,(m)=>{const url=m.startsWith('http')?m:`https://${m}`;return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`});
+function autoLink(text){
+  const urlRegex = /(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
+  return text.replace(urlRegex, (m) => {
+    const url = m.startsWith('http') ? m : `https://${m}`;
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`;
+  });
+}
+function showTooltip(target, html){
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  tooltip.setAttribute('aria-hidden','false');
+
+  const rect = target.getBoundingClientRect();
+  const pad = 8;
+  // temporarily show to measure size
+  const ttRect = tooltip.getBoundingClientRect();
+
+  let top = rect.top - ttRect.height - pad;
+  if (top < 8) top = rect.bottom + pad;
+
+  let left = rect.left + (rect.width - ttRect.width)/2;
+  left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
+
+  tooltip.style.top = `${top + window.scrollY}px`;
+  tooltip.style.left = `${left + window.scrollX}px`;
+}
+function hideTooltip(){
+  tooltip.style.display = 'none';
+  tooltip.setAttribute('aria-hidden','true');
+  tooltip.innerHTML = '';
+}
+
+/* --- Build the grid + tooltips --- */
+for (let n = 1; n <= 101; n++) {
+  const status = statusByRec[n] || "unknown";
+  const cell = document.createElement('div');
+  cell.className = `cell ${status}`;
+  cell.textContent = n;
+  cell.setAttribute('role','gridcell');
+  cell.setAttribute('tabindex','0');
+
+  const label =
+    status === 'done' ? 'Done (verified)' :
+    status === 'progress' ? 'In Progress (verified)' :
+    status === 'todo' ? 'Not Done (verified gap)' :
+    'Unknown / Unverified';
+
+  const recText = recommendations[n-1] || `Recommendation ${n}`;
+  cell.title = recText; // native tooltip fallback
+
+  const src = sourcesByRec[n];
+  let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+
+  if (src && src.length > 0) {
+    html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
+    for (const s of src) {
+      html += `<li>${autoLink(s)}</li>`;
     }
-    function showTooltip(target, html){
-      tooltip.innerHTML=html; tooltip.style.display='block'; tooltip.setAttribute('aria-hidden','false');
-      const rect=target.getBoundingClientRect(); const pad=8; const ttRect=tooltip.getBoundingClientRect();
-      let top=rect.top-ttRect.height-pad; if(top<8) top=rect.bottom+pad;
-      let left=rect.left+(rect.width-ttRect.width)/2; left=Math.max(8,Math.min(left,window.innerWidth-ttRect.width-8));
-      tooltip.style.top=`${top+window.scrollY}px`; tooltip.style.left=`${left+window.scrollX}px`;
-    }
-    function hideTooltip(){ tooltip.style.display='none'; tooltip.setAttribute('aria-hidden','true'); tooltip.innerHTML=''; }
-
-    for(let n=1;n<=101;n++){
-      const status=statusByRec[n]||"unknown";
-      const cell=document.createElement('div');
-      cell.className=`cell ${status}`; cell.textContent=n; cell.setAttribute('role','gridcell'); cell.setAttribute('tabindex','0');
-
-      const label = status==='done'?'Done (verified)':status==='progress'?'In Progress (verified)':status==='todo'?'Not Done (verified gap)':'Unknown / Unverified';
-      const recText = recommendations[n-1] || `Recommendation ${n}`;
-cell.title = recText; // native tooltip fallback
-const src = sourcesByRec[n];
-
-let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
-
-if (src && src.length > 0) {
-  html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
-  for (const s of src) {
-    const isNote = s.trim().toLowerCase().startsWith('note:');
-    const body = isNote ? s.replace(/^note:\s*/i, '') : s;
-    html += `<li class="${isNote ? 'note-item' : ''}">${isNote ? '<strong>Note:</strong> ' : ''}${autoLink(body)}</li>`;
+    html += `</ul></div>`;
+  } else {
+    html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
   }
-  html += `</ul></div>`;
-} else {
-  html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
+
+  // Events
+  cell.addEventListener('mouseenter', () => showTooltip(cell, html));
+  cell.addEventListener('focus', () => showTooltip(cell, html));
+  cell.addEventListener('mouseleave', hideTooltip);
+  cell.addEventListener('blur', hideTooltip);
+
+  grid.appendChild(cell);
 }
 
-// events
-cell.addEventListener('mouseenter', () => showTooltip(cell, html));
-cell.addEventListener('focus', () => showTooltip(cell, html));
-cell.addEventListener('mouseleave', hideTooltip);
-cell.addEventListener('blur', hideTooltip);
+// Global listeners
+window.addEventListener('scroll', hideTooltip, {passive:true});
+window.addEventListener('resize', hideTooltip);
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
 
-grid.appendChild(cell);
-// END: safe tooltip block with Note: styling
-Two things to double-check
-You keep the lines above this block that set up status, cell, and label. They look like:
-
-js
-Copy code
-const status = statusByRec[n] || "unknown";
-const cell = document.createElement('div');
-// ...
-const label = status === 'done' ? 'Done (verified)'
-  : status === 'progress' ? 'In Progress (verified)'
-  : status === 'todo' ? 'Not Done (verified gap)'
-  : 'Unknown / Unverified';
-}
-
-
-      cell.addEventListener('mouseenter',()=>showTooltip(cell,html));
-      cell.addEventListener('focus',()=>showTooltip(cell,html));
-      cell.addEventListener('mouseleave',hideTooltip);
-      cell.addEventListener('blur',hideTooltip);
-
-      grid.appendChild(cell);
-    }
-
-    // hide tooltip on scroll/resize/escape
-    window.addEventListener('scroll', hideTooltip);
-    window.addEventListener('resize', hideTooltip);
-    window.addEventListener('keydown', e => { if (e.key === "Escape") hideTooltip(); });
-  </script>
 </body>
 </html>
 
