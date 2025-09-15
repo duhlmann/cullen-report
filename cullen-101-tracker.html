@@ -20,11 +20,7 @@
       color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif
     }
-    .wrap{
-      max-width:1100px;
-      margin:24px auto;
-      padding:0 16px
-    }
+    .wrap{ max-width:1100px; margin:24px auto; padding:0 16px }
     h1{margin:0 0 8px}
     p{color:var(--muted);margin:0 0 16px}
     .card{
@@ -33,37 +29,94 @@
       padding:16px;
       box-shadow:0 6px 18px rgba(0,0,0,.2)
     }
-    /* grid styles */
-    #grid {
-      display: grid;
+
+    /* legend */
+    .legend{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:8px }
+    .legend-item{ display:flex; align-items:center; gap:6px; color:var(--muted); font-size:14px }
+    .swatch{ width:14px; height:14px; border-radius:4px; display:inline-block }
+
+    /* grid */
+    #grid{
+      display:grid;
       grid-template-columns: repeat(10, 1fr);
-      gap: 6px;
-      margin-top: 12px;
+      gap:6px;
+      margin-top:12px;
     }
-    .cell {
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: bold;
-      color: #000;
+    .cell{
+      width:30px; height:30px; border-radius:6px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-size:10px; font-weight:bold; color:#000; user-select:none;
+      outline:none;
     }
-    .done { background: var(--accent); }
-    .progress { background: var(--warn); }
-    .todo { background: var(--todo); }
+    .cell:focus{ box-shadow:0 0 0 2px rgba(255,255,255,.25) }
+    .done{ background:var(--accent) }
+    .progress{ background:var(--warn) }
+    .todo{ background:var(--todo) }
+
+    /* helper text */
+    .hint{ color:var(--muted); font-size:12px; margin-top:10px }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Cullen Commission — 101 Recommendations Tracker</h1>
-    <p>Demo page for an interactive grid showing status (Done / In Progress / Not Done).</p>
+    <p>Interactive demo: 101 boxes = 101 recommendations. Colors show status (you can update the data later).</p>
+
     <div class="card">
-      <div id="grid">[grid will go here]</div>
+      <div class="legend" aria-hidden="true">
+        <div class="legend-item"><span class="swatch" style="background:var(--accent)"></span> Done</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--warn)"></span> In&nbsp;Progress</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--todo)"></span> Not&nbsp;Done</div>
+      </div>
+
+      <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
+      <div class="hint">Tip: hover a square to see its label. (We’ll plug in real labels later.)</div>
     </div>
   </div>
+
+  <script>
+    // --- DEMO DATA ---
+    // You can edit these counts later to reflect real status.
+    const COUNT_DONE = 35;       // example: fully implemented
+    const COUNT_PROGRESS = 15;   // example: in progress
+    const TOTAL = 101;
+    const COUNT_TODO = TOTAL - COUNT_DONE - COUNT_PROGRESS;
+
+    // Build an array of 101 status codes like ['done','done',...,'progress',...,'todo',...]
+    const statuses = [
+      ...Array(COUNT_DONE).fill('done'),
+      ...Array(COUNT_PROGRESS).fill('progress'),
+      ...Array(COUNT_TODO).fill('todo'),
+    ];
+
+    // (Optional) shuffle a bit so colors aren't in one block:
+    for (let i = statuses.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [statuses[i], statuses[j]] = [statuses[j], statuses[i]];
+    }
+
+    const grid = document.getElementById('grid');
+
+    // Create 101 cells
+    statuses.forEach((status, idx) => {
+      const n = idx + 1;
+      const cell = document.createElement('div');
+      cell.className = `cell ${status}`;
+      cell.setAttribute('role', 'gridcell');
+      cell.setAttribute('tabindex', '0');
+
+      // Show the number (1..101)
+      cell.textContent = n;
+
+      // Tooltip text (replace later with real titles)
+      const label =
+        status === 'done' ? 'Done' :
+        status === 'progress' ? 'In Progress' :
+        'Not Done';
+      cell.title = `Recommendation ${n} — ${label}`;
+
+      grid.appendChild(cell);
+    });
+  </script>
 </body>
 </html>
