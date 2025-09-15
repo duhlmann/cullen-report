@@ -51,7 +51,7 @@
   <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
 
   <script>
-    /* --- Full recommendation texts for tooltips --- */
+    /* --- Full recommendation texts --- */
     const recommendations = [
       "Rec 1: Establish an independent Anti-Money Laundering (AML) Commissioner.",
       "Rec 2: Maintain the Deputy Ministers’ Committee on AML and the AML Secretariat.",
@@ -156,7 +156,7 @@
       "Rec 101: Develop unexplained wealth order regime in BC."
     ];
 
-    /* --- Status lookup (your verified set) --- */
+    /* --- Status lookup --- */
     const statusByRec = {
       25:"done", 33:"done", 52:"progress",
       69:"done", 71:"done", 72:"done", 78:"done",
@@ -164,7 +164,7 @@
       100:"done", 101:"done"
     };
 
-    /* --- Sources lookup (description + URL as separate strings) --- */
+    /* --- Sources lookup --- */
     const sourcesByRec = {
       25: [
         "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)",
@@ -244,36 +244,43 @@
 
       const label = status==='done'?'Done (verified)':status==='progress'?'In Progress (verified)':status==='todo'?'Not Done (verified gap)':'Unknown / Unverified';
       const recText = recommendations[n-1] || `Recommendation ${n}`;
+      cell.title = recText; // native tooltip fallback
+  
       const src = sourcesByRec[n];
-      let sourcesHTML = '';
-      if(!src || src.length===0){
-        sourcesHTML = `<div class="sources"><span class="sources-title">Source</span><ul><li>Not yet verified</li></ul></div>`;
-      } else {
-        const items = src.map(s=>`<li>${autoLink(s)}</li>`).join('');
-        sourcesHTML = `<div class="sources"><span class="sources-title">Sources</span><ul>${items}</ul></div>`;
-      }
-      const tipHTML = `<strong>${recText}</strong><span class="status">Status: ${label}</span>${sourcesHTML}`;
 
-      cell.addEventListener('mouseenter',()=>showTooltip(cell,tipHTML));
+      let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+      if (src && src.length > 0) {
+        html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
+        for (const s of src) {
+          html += `<li>${autoLink(s)}</li>`;
+        }
+        html += `</ul></div>`;
+      } else {
+        html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
+      }
+
+      cell.addEventListener('mouseenter',()=>showTooltip(cell,html));
+      cell.addEventListener('focus',()=>showTooltip(cell,html));
       cell.addEventListener('mouseleave',hideTooltip);
-      cell.addEventListener('focus',()=>showTooltip(cell,tipHTML));
       cell.addEventListener('blur',hideTooltip);
-      cell.addEventListener('touchstart',(e)=>{e.preventDefault();showTooltip(cell,tipHTML)},{passive:false});
 
       grid.appendChild(cell);
     }
 
-    window.addEventListener('scroll',hideTooltip,{passive:true});
-    window.addEventListener('resize',hideTooltip);
-    window.addEventListener('keydown',(e)=>{if(e.key==='Escape')hideTooltip();});
-    document.addEventListener('touchstart',(e)=>{if(!e.target.closest('.cell'))hideTooltip();},{passive:true});
+    // hide tooltip on scroll/resize/escape
+    window.addEventListener('scroll', hideTooltip);
+    window.addEventListener('resize', hideTooltip);
+    window.addEventListener('keydown', e => { if (e.key === "Escape") hideTooltip(); });
   </script>
 </body>
 </html>
 
-     
-       
+ 
+    
       
+      
+    
+
      
 
 
