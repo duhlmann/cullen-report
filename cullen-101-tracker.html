@@ -1,57 +1,173 @@
-const sourcesByRec = {
-  25: [
-    "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
-  ],
-  33: [
-    "BC Gov – Real Estate: LOTR fees removed for AML/law enforcement access",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
-  ],
-  52: [
-    "BC Gov – Corporate Transparency: provincial support for pan-Canadian beneficial ownership registry",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/corporate-ownership-transparency"
-  ],
-  69: [
-    "CPABC Code of Professional Conduct – Rule requires members to report non-compliance with FINTRAC obligations",
-    "https://www.bccpa.ca/news-events/latest-news/2021/06/23/cpabc-releases-new-anti-money-laundering-guidance"
-  ],
-  71: [
-    "PCMLTFA amendments – accountants and accounting firms added as reporting entities (federal coverage)",
-    "https://www.fintrac-canafe.gc.ca/guidance-directives/overview-apercu/pcmltfa-lrpcfat/pcmltfa-lrpcfat-eng"
-  ],
-  72: [
-    "CPABC Rule 219 – Client ID, verification, and source-of-funds obligations",
-    "https://www.bccpa.ca/members/practice-regulations/client-identification-verification"
-  ],
-  78: [
-    "CPABC Practice Review – AML compliance now integrated into regular practice inspections",
-    "https://www.bccpa.ca/members/practice-regulations/practice-review"
-  ],
-  85: [
-    "BC Gov – Financial Sector: PST export-vehicle refund loophole closed",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/financial-sector"
-  ],
-  89: [
-    "BC Gov – Public Safety: Police directed to consider ML at outset of profit-driven crime investigations",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
-  ],
-  91: [
-    "BC Gov – Public Safety: Superintendence & Evaluation Unit created as dedicated ML intel/investigation unit",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
-  ],
-  96: [
-    "BC Gov – Public Safety: Police instructed to consider civil asset forfeiture in profit-motivated crimes",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
-  ],
-  100: [
-    "BC Gov – Public Safety: Civil Forfeiture Office moved to government budget model (no longer self-funded)",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
-  ],
-  101: [
-    "BC Gov – Civil Forfeiture: Unexplained Wealth Orders enacted and in use",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
-  ]
-};
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cullen Commission — 101 Recommendations Tracker</title>
+  <style>
+    :root{
+      --bg:#0b0f19; --card:#121827; --muted:#9aa4b2; --text:#e5e7eb;
+      --accent:#6ee7b7; --warn:#facc15; --todo:#ef4444; --unknown:#6b7280;
+      --tooltip:#111827; --tooltip-text:#e5e7eb; --tooltip-shadow:0 8px 24px rgba(0,0,0,.35); --link:#93c5fd;
+    }
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+    h1{margin:0 0 8px} p{color:var(--muted);margin:0 0 16px}
+    .card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+    .legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+    .legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
+    .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
+    #grid{display:grid;grid-template-columns: repeat(10, 1fr);gap:6px;margin-top:12px}
+    .cell{width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:#000;user-select:none;outline:none}
+    .cell:focus{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+    .done{background:var(--accent)} .progress{background:var(--warn)} .todo{background:var(--todo)} .unknown{background:var(--unknown);color:#fff}
+    .note{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.4}
+    .tooltip{position:fixed;z-index:9999;max-width:min(520px,92vw);background:var(--tooltip);color:var(--tooltip-text);padding:10px 12px;border-radius:10px;box-shadow:var(--tooltip-shadow);font-size:12px;line-height:1.35;display:none;pointer-events:none}
+    .tooltip strong{font-weight:600}.tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
+    .tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
+    .tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
+    .tooltip .sources ul{margin:0;padding-left:16px}
+    .tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Cullen Commission — 101 Recommendations Tracker</h1>
+    <p>Hover or focus a box to see the full recommendation text, status, and sources. Gray = not yet verified from public sources.</p>
+
+    <div class="card">
+      <div class="legend" aria-hidden="true">
+        <div class="legend-item"><span class="swatch" style="background:var(--accent)"></span> Done (verified)</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--warn)"></span> In&nbsp;Progress (verified)</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--unknown)"></span> Unknown / Unverified</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--todo)"></span> Not&nbsp;Done (verified gap)</div>
+      </div>
+
+      <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
+      <div class="note">We only color items where we’ve found solid sources. Everything else stays gray until verified.</div>
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <script>
+    /* --- Recommendation texts --- */
+    const recommendations = Array.from({length:101},(_,i)=>`Rec ${i+1}`);
+
+    /* --- Status lookup --- */
+    const statusByRec = {
+      25:"done", 33:"done", 52:"progress",
+      69:"done", 71:"done", 72:"done", 78:"done",
+      85:"done", 89:"done", 91:"done", 96:"done",
+      100:"done", 101:"done"
+    };
+
+    /* --- Sources lookup --- */
+    const sourcesByRec = {
+      25: [
+        "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
+      ],
+      33: [
+        "BC Gov – Real Estate: LOTR fees removed for AML/law enforcement access",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
+      ],
+      52: [
+        "BC Gov – Corporate Transparency: provincial support for pan-Canadian beneficial ownership registry",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/corporate-ownership-transparency"
+      ],
+      69: [
+        "CPABC Code of Professional Conduct – Rule requires members to report non-compliance with FINTRAC obligations",
+        "https://www.bccpa.ca/news-events/latest-news/2021/06/23/cpabc-releases-new-anti-money-laundering-guidance"
+      ],
+      71: [
+        "PCMLTFA amendments – accountants and accounting firms added as reporting entities (federal coverage)",
+        "https://www.fintrac-canafe.gc.ca/guidance-directives/overview-apercu/pcmltfa-lrpcfat/pcmltfa-lrpcfat-eng"
+      ],
+      72: [
+        "CPABC Rule 219 – Client ID, verification, and source-of-funds obligations",
+        "https://www.bccpa.ca/members/practice-regulations/client-identification-verification"
+      ],
+      78: [
+        "CPABC Practice Review – AML compliance now integrated into regular practice inspections",
+        "https://www.bccpa.ca/members/practice-regulations/practice-review"
+      ],
+      85: [
+        "BC Gov – Financial Sector: PST export-vehicle refund loophole closed",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/financial-sector"
+      ],
+      89: [
+        "BC Gov – Public Safety: Police directed to consider ML at outset of profit-driven crime investigations",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      91: [
+        "BC Gov – Public Safety: Superintendence & Evaluation Unit created as dedicated ML intel/investigation unit",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      96: [
+        "BC Gov – Public Safety: Police instructed to consider civil asset forfeiture in profit-motivated crimes",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      100: [
+        "BC Gov – Public Safety: Civil Forfeiture Office moved to government budget model (no longer self-funded)",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      101: [
+        "BC Gov – Civil Forfeiture: Unexplained Wealth Orders enacted and in use",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ]
+    };
+
+    /* --- Tooltip helpers --- */
+    const grid = document.getElementById('grid');
+    const tooltip = document.getElementById('tooltip');
+
+    function autoLink(text){
+      const urlRegex=/(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
+      return text.replace(urlRegex,(m)=>{const url=m.startsWith('http')?m:`https://${m}`;return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`});
+    }
+    function showTooltip(target, html){
+      tooltip.innerHTML=html; tooltip.style.display='block'; tooltip.setAttribute('aria-hidden','false');
+      const rect=target.getBoundingClientRect(); const pad=8; const ttRect=tooltip.getBoundingClientRect();
+      let top=rect.top-ttRect.height-pad; if(top<8) top=rect.bottom+pad;
+      let left=rect.left+(rect.width-ttRect.width)/2; left=Math.max(8,Math.min(left,window.innerWidth-ttRect.width-8));
+      tooltip.style.top=`${top+window.scrollY}px`; tooltip.style.left=`${left+window.scrollX}px`;
+    }
+    function hideTooltip(){ tooltip.style.display='none'; tooltip.setAttribute('aria-hidden','true'); tooltip.innerHTML=''; }
+
+    for(let n=1;n<=101;n++){
+      const status=statusByRec[n]||"unknown";
+      const cell=document.createElement('div');
+      cell.className=`cell ${status}`; cell.textContent=n; cell.setAttribute('role','gridcell'); cell.setAttribute('tabindex','0');
+
+      const label = status==='done'?'Done (verified)':status==='progress'?'In Progress (verified)':status==='todo'?'Not Done (verified gap)':'Unknown / Unverified';
+      const recText = recommendations[n-1] || `Recommendation ${n}`;
+      const src = sourcesByRec[n];
+      let sourcesHTML = '';
+      if(!src || src.length===0){
+        sourcesHTML = `<div class="sources"><span class="sources-title">Source</span><ul><li>Not yet verified</li></ul></div>`;
+      } else {
+        const items = src.map(s=>`<li>${autoLink(s)}</li>`).join('');
+        sourcesHTML = `<div class="sources"><span class="sources-title">Sources</span><ul>${items}</ul></div>`;
+      }
+      const tipHTML = `<strong>${recText}</strong><span class="status">Status: ${label}</span>${sourcesHTML}`;
+
+      cell.addEventListener('mouseenter',()=>showTooltip(cell,tipHTML));
+      cell.addEventListener('mouseleave',hideTooltip);
+      cell.addEventListener('focus',()=>showTooltip(cell,tipHTML));
+      cell.addEventListener('blur',hideTooltip);
+      cell.addEventListener('touchstart',(e)=>{e.preventDefault();showTooltip(cell,tipHTML)},{passive:false});
+
+      grid.appendChild(cell);
+    }
+
+    window.addEventListener('scroll',hideTooltip,{passive:true});
+    window.addEventListener('resize',hideTooltip);
+    window.addEventListener('keydown',(e)=>{if(e.key==='Escape')hideTooltip();});
+    document.addEventListener('touchstart',(e)=>{if(!e.target.closest('.cell'))hideTooltip();},{passive:true});
+  </script>
+</body>
+</html>
 
    
   
