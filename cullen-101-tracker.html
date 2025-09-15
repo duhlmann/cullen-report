@@ -52,6 +52,7 @@
 
   <script>
     window.addEventListener('DOMContentLoaded', () => {
+      alert('JS is running');
       /* --- Data --- */
       const recommendations = Array.from({ length: 101 }, (_, i) => `Rec ${i + 1}`);
       const statusByRec = { 4:"todo", 2:"done", 5:"progress", 25:"done", 33:"done" };
