@@ -302,6 +302,8 @@
       let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
 if (src && src.length > 0) {
   html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
+  if (src && src.length > 0) {
+  html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
   for (const s of src) {
     const isNote = s.trim().toLowerCase().startsWith('note:');
     const body = isNote ? s.replace(/^note:\s*/i, '') : s;
