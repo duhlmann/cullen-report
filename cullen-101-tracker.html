@@ -72,7 +72,7 @@
 
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
       <div class="note">
-        Sources: B.C. “Quick Glance” pages (Corporate ownership transparency, Real estate, Gambling, Financial sector, Public safety, Civil forfeiture), plus the Cullen recommendations list and federal BO registry update. We’ll keep adding verified items over time.
+        Sources: B.C. “Quick Glance” pages (Corporate ownership transparency, Real estate, Gambling, Financial sector, Public safety, Civil forfeiture), plus BCFSA/MSA updates and the federal BO registry note. We’ll keep adding verified items over time.
       </div>
     </div>
   </div>
@@ -83,33 +83,35 @@
     // Everything not listed here defaults to "unknown".
     const statusByRec = {
       // --- Corporate / Beneficial ownership ---
-      52: "progress",  // Provincial public BO registry in legislation; working toward integrated pan-Canadian platform
+      52: "progress",  // BC legislation and federal registry exist; pan-Canadian integration still underway
+      // Page: corporate ownership transparency (timeline & actions). :contentReference[oaicite:1]{index=1}
 
       // --- Real estate / LOTR / Mortgages ---
-      33: "done",      // LOTR search fees eliminated (better access)
-      25: "done",      // Mortgage brokers/lenders under PCMLTFA (effective Oct 2024)
-      14: "progress",  // New Mortgage Services Act (MSA) modernizes definitions/registration (not fully in force yet)
-      17: "progress",  // MSA grants BCFSA rule-making authority (on coming-into-force)
-      18: "progress",  // MSA creates principal/managing broker accountability
-      20: "progress",  // MSA provides significant penalties
+      33: "done",      // LOTR search fees eliminated (greater access). :contentReference[oaicite:2]{index=2}
+      25: "done",      // Mortgage brokers/administrators/lenders under PCMLTFA effective Oct 2024. :contentReference[oaicite:3]{index=3}
+      14: "progress",  // Mortgage Services Act (MSA) modernizes licensing/definitions — transition to Oct 13, 2026 in force. :contentReference[oaicite:4]{index=4}
+      17: "progress",  // MSA grants BCFSA rule-making authority (framework approved; in-force Oct 2026). :contentReference[oaicite:5]{index=5}
+      18: "progress",  // MSA creates principal/managing broker accountability. :contentReference[oaicite:6]{index=6}
+      20: "progress",  // MSA provides significant penalties. :contentReference[oaicite:7]{index=7}
 
       // --- Gambling ---
-      5:  "progress",  // Roadmap to 100% account-based known play by 2029
-      4:  "todo",      // SOF threshold still $10,000 (Cullen asked for $3,000)
+      5:  "progress",  // Roadmap to 100% account-based known play by 2029; AML monitoring rollout 2024–25. :contentReference[oaicite:8]{index=8}
+      4:  "todo",      // SOF declaration threshold remains $10,000 (Cullen asked for $3,000). :contentReference[oaicite:9]{index=9}
 
       // --- Financial sector (MSBs & vehicles) ---
-      51: "progress",  // Money Services Businesses Act introduced; will come into force via regulation
-      85: "done",      // PST refund loophole for exported vehicles closed
-      84: "progress",  // Vehicle export oversight measures underway
+      51: "progress",  // Money Services Businesses Act introduced; comes into force by regulation. :contentReference[oaicite:10]{index=10}
+      85: "done",      // PST refund loophole on exported vehicles eliminated. :contentReference[oaicite:11]{index=11}
+      // (84 left unverified — conservative)
 
       // --- Public safety / coordination ---
-      91: "done",      // Superintendence & Evaluation Unit created to collect ML investigation metrics
-      63: "progress",  // Stronger LSBC–police referrals/collaboration
-      64: "progress",
-      65: "progress",
+      91: "done",      // Superintendence & Evaluation Unit created to collect ML investigation metrics. :contentReference[oaicite:12]{index=12}
+      63: "progress",  // Stronger LSBC–police referrals/collaboration. :contentReference[oaicite:13]{index=13}
+      64: "progress",  // Ditto cluster. :contentReference[oaicite:14]{index=14}
+      65: "progress",  // Ditto cluster. :contentReference[oaicite:15]{index=15}
 
       // --- Civil forfeiture ---
-      101: "done"      // Unexplained Wealth Orders regime enacted and used
+      101: "done",     // Unexplained Wealth Orders regime enacted & used (multiple filings). :contentReference[oaicite:16]{index=16}
+      99: "progress"   // Civil Forfeiture Office capacity expanded. :contentReference[oaicite:17]{index=17}
     };
 
     const grid = document.getElementById('grid');
@@ -133,3 +135,5 @@
   </script>
 </body>
 </html>
+     
+     
