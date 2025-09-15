@@ -72,17 +72,31 @@
   </div>
 
   <script>
-    // --- FIXED STATUS LOOKUP DEMO ---
+    // --- FIXED STATUS LOOKUP (real examples from BC gov Quick Glance, Aug 2025) ---
     // Key = recommendation number, Value = "done" | "progress" | "todo"
     const statusByRec = {
-      52: "done",       // Beneficial Ownership Registry
-      5: "done",        // Casinos: account-based known play
-      101: "done",      // Unexplained Wealth Orders
-      51: "done",       // MSB regulation
-      33: "done",       // Land Owner Transparency Registry
-      84: "progress",   // Vehicle export regulation
-      82: "todo",       // Luxury goods reporting
-      70: "todo"        // Study unregulated accountants
+      // Corporate ownership transparency
+      52: "progress",  // Pan-Canadian beneficial ownership registry (created in law, not fully live)
+
+      // Real estate
+      33: "done",      // Land Owner Transparency Registry search fees eliminated
+
+      // Gambling
+      5:  "progress",  // Casinos: movement toward verified/known play
+
+      // Financial sector
+      51: "done",      // New MSB regime under BCFSA
+      85: "done",      // PST changes closed refund loophole for exported vehicles
+      84: "progress",  // Vehicle export regulation (partly implemented)
+
+      // Public safety / coordination
+      91: "progress",  // New Superintendence & Evaluation Unit
+      63: "progress",  // Stronger links with Law Society of BC
+      64: "progress",  // Same cluster
+      65: "progress",  // Same cluster
+
+      // Civil forfeiture
+      101: "done"      // Unexplained Wealth Orders (UWO) regime introduced
     };
 
     const grid = document.getElementById('grid');
@@ -97,7 +111,7 @@
       cell.className = `cell ${status}`;
       cell.textContent = n;
 
-      // Tooltip (for now just the number + status)
+      // Tooltip shows number + status
       const label =
         status === 'done' ? 'Done' :
         status === 'progress' ? 'In Progress' :
@@ -109,6 +123,7 @@
   </script>
 </body>
 </html>
+
    
   
-  
+   
