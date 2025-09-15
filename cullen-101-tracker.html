@@ -51,10 +51,112 @@
   <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
 
   <script>
-    /* --- Recommendation texts --- */
-    const recommendations = Array.from({length:101},(_,i)=>`Rec ${i+1}`);
+    /* --- Full recommendation texts for tooltips --- */
+    const recommendations = [
+      "Rec 1: Establish an independent Anti-Money Laundering (AML) Commissioner.",
+      "Rec 2: Maintain the Deputy Ministers’ Committee on AML and the AML Secretariat.",
+      "Rec 3: Require AML liaison officers across agencies.",
+      "Rec 4: Lower casino source-of-funds threshold to $3,000.",
+      "Rec 5: Implement 100% account-based known play at casinos.",
+      "Rec 6: Maintain limits on casino convenience cheque payouts.",
+      "Rec 7: Ensure Independent Gaming Control Office can issue directives.",
+      "Rec 8: Include developer employees in real estate licensing.",
+      "Rec 9: License large-scale FSBO (‘for sale by owner’) operations.",
+      "Rec 10: Support BCFSA data needs, respecting privacy.",
+      "Rec 11: Require source-of-funds inquiries by real estate licensees.",
+      "Rec 12: Brokerages must have AML compliance programs.",
+      "Rec 13: Resource BCFSA to handle serious misconduct quickly.",
+      "Rec 14: Harmonize mortgage broker definition with registration.",
+      "Rec 15: Extended criminal/police checks for mortgage brokers.",
+      "Rec 16: Require mortgage brokerages to submit annual info returns.",
+      "Rec 17: Give BCFSA rule-making authority over mortgage brokers.",
+      "Rec 18: Create managing broker role with defined responsibilities.",
+      "Rec 19: Mandatory AML training for mortgage brokers/managers.",
+      "Rec 20: Raise penalties under Mortgage Brokers Act to $250k.",
+      "Rec 21: Registrar can order profit disgorgement incl. unregistered actors.",
+      "Rec 22: Licensees must report unregistered mortgage brokering.",
+      "Rec 23: Remove automatic stay pending appeal in Act.",
+      "Rec 24: BCFSA partnerships with AML intel/investigation unit.",
+      "Rec 25: Ask feds to make mortgage brokers reporting entities.",
+      "Rec 26: Private mortgage lenders must inquire into source of investor capital.",
+      "Rec 27: Modify Form B to report all legal mortgage owners.",
+      "Rec 28: Amend LOTR to include mortgages as interests in land.",
+      "Rec 29: Regulate private mortgage lenders under new legislation.",
+      "Rec 30: Regulator access to land title data to find unregistered lenders.",
+      "Rec 31: Mandatory source-of-funds in foreclosure petitions.",
+      "Rec 32: Courts may deny relief if source funds false/suspect.",
+      "Rec 33: Remove fees for LOTR access by law enforcement.",
+      "Rec 34: AML Commissioner to review LOTR after 3 years.",
+      "Rec 35: Finance/CMHC to analyze real estate data integrity.",
+      "Rec 36: Give LTSA explicit AML mandate.",
+      "Rec 37: Give Real Estate Data Analytics Unit explicit AML mandate.",
+      "Rec 38: Develop action plan to close real estate data gaps.",
+      "Rec 39: Hybrid model of data management; AML Commissioner analyzes.",
+      "Rec 40: LTSA must provide historical mortgage/property info.",
+      "Rec 41: Amend LTSA to record agents/brokers in transactions.",
+      "Rec 42: Use unique identifiers for LTSA records.",
+      "Rec 43: Remove fees for LTSA access by AML/law enforcement.",
+      "Rec 44: Analyze housing price impacts of reforms.",
+      "Rec 45: BCFSA to develop AML guidance for credit unions.",
+      "Rec 46: Give BCFSA enduring AML mandate.",
+      "Rec 47: Resource BCFSA to create AML contact group.",
+      "Rec 48: Urge feds to amend PIPEDA safe-harbour for FI info sharing.",
+      "Rec 49: Create provincial safe-harbour for FI info sharing.",
+      "Rec 50: Create ‘keep open’ regime for suspicious accounts.",
+      "Rec 51: Expand BCFSA mandate to regulate MSBs.",
+      "Rec 52: Work with partners to implement pan-Canadian ownership registry.",
+      "Rec 53: Law Societies to develop AML metrics (breaches, referrals).",
+      "Rec 54: Law Societies to build info-sharing and coordination systems.",
+      "Rec 55: Amend LS Rule 3-59 cash exception to reasonable fees only.",
+      "Rec 56: Clarify LS client ID rules on source of money.",
+      "Rec 57: Expand LS ID/verification to more contexts.",
+      "Rec 58: Clarify ‘directly related to legal services’ in LS trust account rule.",
+      "Rec 59: LS to raise awareness on trust account limitations & info sharing.",
+      "Rec 60: Remove Commentary 3.1(a) from LS Code.",
+      "Rec 61: AML training for LS trust auditors/investigators.",
+      "Rec 62: Mandatory AML training for high-risk lawyers.",
+      "Rec 63: Police must refer lawyer cases to LS; LS to advocate for rules.",
+      "Rec 64: LS to clarify process for giving evidence to law enforcement.",
+      "Rec 65: Province+LS to raise awareness on lawyer oversight.",
+      "Rec 66: Raise max fines for Notaries Public misconduct.",
+      "Rec 67: Notaries must record source of funds in transactions.",
+      "Rec 68: AML education for notaries on private lending.",
+      "Rec 69: CPABC Code: members must report FINTRAC non-compliance.",
+      "Rec 70: Study unregulated accountants and ML risk.",
+      "Rec 71: Ask feds to add accountants as reporting entities.",
+      "Rec 72: CPABC to require ID/verification & source-funds rules.",
+      "Rec 73: CPABC to assess use of trust accounts.",
+      "Rec 74: Audit unreported or sampled accountants’ trust accounts.",
+      "Rec 75: CPABC to investigate member cash acceptance.",
+      "Rec 76: Implement cash limits for accountants in client matters.",
+      "Rec 77: CPABC to track member activities under PCMLTFA regs.",
+      "Rec 78: Add AML compliance to practice reviews.",
+      "Rec 79: AML continuing education for high-risk accountants.",
+      "Rec 80: CPABC continuous liaison with FINTRAC.",
+      "Rec 81: CPABC to enable law enforcement info sharing.",
+      "Rec 82: Universal record-keeping/reporting for $10k+ luxury goods.",
+      "Rec 83: Minister+AML Commissioner can impose measures in luxury sector.",
+      "Rec 84: Regulate vehicle exports; registration & reporting.",
+      "Rec 85: Amend PST Act for vehicle tax rebate info sharing.",
+      "Rec 86: Train law enforcement/regulators on virtual assets.",
+      "Rec 87: Create regulatory regime for VASPs.",
+      "Rec 88: Use trade-based ML detection software in intel unit.",
+      "Rec 89: Police must consider ML at start of profit crime cases.",
+      "Rec 90: ML training modules for law enforcement (asset seizure).",
+      "Rec 91: Create dedicated provincial ML intel & investigation unit.",
+      "Rec 92: AML Commissioner+Branch to monitor RCMP allocation, outcomes.",
+      "Rec 93: Branch to track FINTRAC responses to info records.",
+      "Rec 94: Ensure CFSEU has enough surveillance to support intel unit.",
+      "Rec 95: AML Commissioner to review intel unit every 5 years.",
+      "Rec 96: Police must consider asset forfeiture in profit crime cases.",
+      "Rec 97: Include asset forfeiture recs in Crown reports.",
+      "Rec 98: Training on criminal forfeiture for investigators/prosecutors.",
+      "Rec 99: Expand Civil Forfeiture Office staff capacity.",
+      "Rec 100: Move Civil Forfeiture Office to gov’t funding model.",
+      "Rec 101: Develop unexplained wealth order regime in BC."
+    ];
 
-    /* --- Status lookup --- */
+    /* --- Status lookup (your verified set) --- */
     const statusByRec = {
       25:"done", 33:"done", 52:"progress",
       69:"done", 71:"done", 72:"done", 78:"done",
@@ -62,7 +164,7 @@
       100:"done", 101:"done"
     };
 
-    /* --- Sources lookup --- */
+    /* --- Sources lookup (description + URL as separate strings) --- */
     const sourcesByRec = {
       25: [
         "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)",
@@ -81,7 +183,7 @@
         "https://www.bccpa.ca/news-events/latest-news/2021/06/23/cpabc-releases-new-anti-money-laundering-guidance"
       ],
       71: [
-        "PCMLTFA amendments – accountants and accounting firms added as reporting entities (federal coverage)",
+        "PCMLTFA – accountants and accounting firms as reporting entities (federal coverage)",
         "https://www.fintrac-canafe.gc.ca/guidance-directives/overview-apercu/pcmltfa-lrpcfat/pcmltfa-lrpcfat-eng"
       ],
       72: [
@@ -89,7 +191,7 @@
         "https://www.bccpa.ca/members/practice-regulations/client-identification-verification"
       ],
       78: [
-        "CPABC Practice Review – AML compliance now integrated into regular practice inspections",
+        "CPABC Practice Review – AML compliance integrated into practice inspections",
         "https://www.bccpa.ca/members/practice-regulations/practice-review"
       ],
       85: [
@@ -97,19 +199,19 @@
         "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/financial-sector"
       ],
       89: [
-        "BC Gov – Public Safety: Police directed to consider ML at outset of profit-driven crime investigations",
+        "BC Gov – Public Safety: Police consider ML at outset of profit-driven crime investigations",
         "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
       ],
       91: [
-        "BC Gov – Public Safety: Superintendence & Evaluation Unit created as dedicated ML intel/investigation unit",
+        "BC Gov – Public Safety: Superintendence & Evaluation Unit created (ML intel/investigation)",
         "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
       ],
       96: [
-        "BC Gov – Public Safety: Police instructed to consider civil asset forfeiture in profit-motivated crimes",
+        "BC Gov – Public Safety: Police consider civil asset forfeiture in profit-motivated crimes",
         "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
       ],
       100: [
-        "BC Gov – Public Safety: Civil Forfeiture Office moved to government budget model (no longer self-funded)",
+        "BC Gov – Public Safety: Civil Forfeiture Office moved to government budget model",
         "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
       ],
       101: [
@@ -168,6 +270,11 @@
   </script>
 </body>
 </html>
+
+     
+       
+      
+     
 
 
  
