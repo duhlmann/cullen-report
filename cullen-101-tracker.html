@@ -10,9 +10,9 @@
       --card:#121827;
       --muted:#9aa4b2;
       --text:#e5e7eb;
-      --accent:#6ee7b7;  /* Done */
-      --warn:#facc15;    /* In Progress */
-      --todo:#ef4444;    /* Not Done (use sparingly, only when verified) */
+      --accent:#6ee7b7;  /* Done (verified) */
+      --warn:#facc15;    /* In Progress (verified) */
+      --todo:#ef4444;    /* Not Done (verified gap) */
       --unknown:#6b7280; /* Unknown / Unverified */
     }
     html,body{
@@ -60,56 +60,61 @@
 <body>
   <div class="wrap">
     <h1>Cullen Commission — 101 Recommendations Tracker</h1>
-    <p>Colors show only <strong>verified</strong> statuses. Gray = not yet verified.</p>
+    <p>Only <strong>verified</strong> items are colored. Gray = not yet verified from public sources.</p>
 
     <div class="card">
       <div class="legend" aria-hidden="true">
         <div class="legend-item"><span class="swatch" style="background:var(--accent)"></span> Done (verified)</div>
         <div class="legend-item"><span class="swatch" style="background:var(--warn)"></span> In&nbsp;Progress (verified)</div>
         <div class="legend-item"><span class="swatch" style="background:var(--unknown)"></span> Unknown / Unverified</div>
-        <!-- Optional: only use red if we have solid evidence something is not done -->
-        <!-- <div class="legend-item"><span class="swatch" style="background:var(--todo)"></span> Not&nbsp;Done (verified)</div> -->
+        <div class="legend-item"><span class="swatch" style="background:var(--todo)"></span> Not&nbsp;Done (verified gap)</div>
       </div>
 
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
       <div class="note">
-        Source snapshots: B.C. “Quick Glance” progress page (Aug 7, 2025) and IJF overview (Jan 20, 2025). We will update cells from gray to colors as items are verified. 
+        Sources: B.C. “Quick Glance” pages (Corporate ownership transparency, Real estate, Gambling, Financial sector, Public safety, Civil forfeiture), plus the Cullen recommendations list and federal BO registry update. We’ll keep adding verified items over time.
       </div>
     </div>
   </div>
 
   <script>
-    // --- VERIFIED STATUS LOOKUP ---
+    // VERIFIED STATUS LOOKUP
     // Key = recommendation number, Value = "done" | "progress" | "todo"
-    // (We default everything else to "unknown" so we don't mislabel.)
+    // Everything not listed here defaults to "unknown".
     const statusByRec = {
-      // Corporate ownership transparency
-      52: "progress",  // Pan-Canadian beneficial ownership registry: created in law / moving toward live
+      // --- Corporate / Beneficial ownership ---
+      52: "progress",  // Provincial public BO registry in legislation; working toward integrated pan-Canadian platform
 
-      // Real estate
-      33: "done",      // LOTR search fees eliminated for LE/regulators
+      // --- Real estate / LOTR / Mortgages ---
+      33: "done",      // LOTR search fees eliminated (better access)
+      25: "done",      // Mortgage brokers/lenders under PCMLTFA (effective Oct 2024)
+      14: "progress",  // New Mortgage Services Act (MSA) modernizes definitions/registration (not fully in force yet)
+      17: "progress",  // MSA grants BCFSA rule-making authority (on coming-into-force)
+      18: "progress",  // MSA creates principal/managing broker accountability
+      20: "progress",  // MSA provides significant penalties
 
-      // Gambling
-      5:  "progress",  // Movement toward verified/known play (ID checks / verified play expansion)
+      // --- Gambling ---
+      5:  "progress",  // Roadmap to 100% account-based known play by 2029
+      4:  "todo",      // SOF threshold still $10,000 (Cullen asked for $3,000)
 
-      // Financial sector
-      51: "done",      // Provincial MSB regulatory regime under BCFSA
-      85: "done",      // PST changes to close refund loophole tied to exported vehicles
-      84: "progress",  // Vehicle export regulation measures underway
+      // --- Financial sector (MSBs & vehicles) ---
+      51: "progress",  // Money Services Businesses Act introduced; will come into force via regulation
+      85: "done",      // PST refund loophole for exported vehicles closed
+      84: "progress",  // Vehicle export oversight measures underway
 
-      // Public safety / coordination
-      91: "progress",  // Superintendence & Evaluation Unit for ML investigations
-      63: "progress",  // Stronger referral/coordination with Law Society of BC
+      // --- Public safety / coordination ---
+      91: "done",      // Superintendence & Evaluation Unit created to collect ML investigation metrics
+      63: "progress",  // Stronger LSBC–police referrals/collaboration
       64: "progress",
       65: "progress",
 
-      // Civil forfeiture
-      101: "done"      // Unexplained Wealth Orders regime introduced
+      // --- Civil forfeiture ---
+      101: "done"      // Unexplained Wealth Orders regime enacted and used
     };
 
     const grid = document.getElementById('grid');
 
-    // --- CREATE CELLS (default to "unknown" unless verified above) ---
+    // CREATE CELLS (default to "unknown" unless verified above)
     for (let n = 1; n <= 101; n++) {
       const status = statusByRec[n] || "unknown";
       const cell = document.createElement('div');
@@ -119,7 +124,7 @@
       const label =
         status === 'done' ? 'Done (verified)' :
         status === 'progress' ? 'In Progress (verified)' :
-        status === 'todo' ? 'Not Done (verified)' :
+        status === 'todo' ? 'Not Done (verified gap)' :
         'Unknown / Unverified';
 
       cell.title = `Recommendation ${n} — ${label}`;
