@@ -146,8 +146,17 @@
     });
  
 <script>
-  alert("JS heartbeat!");
+  // draw one green cell so we know the grid works
+  const grid = document.getElementById('grid');
+  grid.innerHTML = ''; // clear anything old
+
+  const cell = document.createElement('div');
+  cell.className = 'cell done'; // green
+  cell.textContent = '1';
+  cell.setAttribute('tabindex','0');
+
+grid.appendChild(cell);
 </script>
 </body>
-</html> 
+</html>
        
