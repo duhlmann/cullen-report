@@ -14,6 +14,9 @@
       --warn:#facc15;    /* In Progress (verified) */
       --todo:#ef4444;    /* Not Done (verified gap) */
       --unknown:#6b7280; /* Unknown / Unverified */
+      --tooltip:#111827; /* tooltip bg */
+      --tooltip-text:#e5e7eb;
+      --tooltip-shadow: 0 8px 24px rgba(0,0,0,.35);
     }
     html,body{margin:0;background:var(--bg);color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
@@ -35,12 +38,29 @@
     .todo{background:var(--todo)}
     .unknown{background:var(--unknown);color:#fff}
     .note{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.4}
+
+    /* Custom tooltip */
+    .tooltip {
+      position: fixed;
+      z-index: 9999;
+      max-width: min(420px, 90vw);
+      background: var(--tooltip);
+      color: var(--tooltip-text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      box-shadow: var(--tooltip-shadow);
+      font-size: 12px;
+      line-height: 1.35;
+      display: none; /* hidden by default */
+      pointer-events: none;
+    }
+    .tooltip .status {opacity:.8; font-style: italic; display:block; margin-top:4px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Cullen Commission — 101 Recommendations Tracker</h1>
-    <p>Hover a box to see the full recommendation text + its status. Gray = not yet verified from public sources.</p>
+    <p>Hover or focus a box to see the full recommendation text + its status. Gray = not yet verified from public sources.</p>
 
     <div class="card">
       <div class="legend" aria-hidden="true">
@@ -51,12 +71,14 @@
       </div>
 
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
-
       <div class="note">
         We only color items where we’ve found solid public sources. Everything else stays gray until verified.
       </div>
     </div>
   </div>
+
+  <!-- one shared tooltip element -->
+  <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
 
   <script>
     /* --- FULL TEXT OF 101 RECOMMENDATIONS (tooltips) --- */
@@ -249,11 +271,43 @@
 
     /* --- BUILD GRID --- */
     const grid = document.getElementById('grid');
+    const tooltip = document.getElementById('tooltip');
+
+    function showTooltip(target, text) {
+      tooltip.innerHTML = text;
+      tooltip.style.display = 'block';
+      tooltip.setAttribute('aria-hidden', 'false');
+
+      const rect = target.getBoundingClientRect();
+      const padding = 8;
+      const ttRect = tooltip.getBoundingClientRect();
+
+      // Position above the cell; if not enough space, place below
+      let top = rect.top - ttRect.height - padding;
+      if (top < 8) top = rect.bottom + padding;
+
+      // Center horizontally; clamp to viewport
+      let left = rect.left + (rect.width - ttRect.width)/2;
+      left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
+
+      tooltip.style.top = `${top + window.scrollY}px`;
+      tooltip.style.left = `${left + window.scrollX}px`;
+    }
+
+    function hideTooltip() {
+      tooltip.style.display = 'none';
+      tooltip.setAttribute('aria-hidden', 'true');
+      tooltip.innerHTML = '';
+    }
+
     for (let n = 1; n <= 101; n++) {
       const status = statusByRec[n] || "unknown";
       const cell = document.createElement('div');
       cell.className = `cell ${status}`;
       cell.textContent = n;
+      cell.setAttribute('role','gridcell');
+      cell.setAttribute('tabindex','0');
+      cell.setAttribute('aria-label', `Recommendation ${n}`);
 
       const label =
         status === 'done' ? 'Done (verified)' :
@@ -262,22 +316,35 @@
         'Unknown / Unverified';
 
       const recText = recommendations[n-1] || `Recommendation ${n}`;
-      // IMPORTANT: this is what drives the hover tooltip
-      cell.setAttribute('title', `${recText} — Status: ${label}`);
+      const tipHTML = `<strong>${recText}</strong><span class="status">Status: ${label}</span>`;
+
+      // mouse
+      cell.addEventListener('mouseenter', () => showTooltip(cell, tipHTML));
+      cell.addEventListener('mouseleave', hideTooltip);
+      // keyboard
+      cell.addEventListener('focus', () => showTooltip(cell, tipHTML));
+      cell.addEventListener('blur', hideTooltip);
+      // touch (tap to show; tap elsewhere to hide)
+      cell.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        showTooltip(cell, tipHTML);
+      }, {passive:false});
 
       grid.appendChild(cell);
     }
+
+    // hide tooltip on scroll/resize/escape
+    window.addEventListener('scroll', hideTooltip, {passive:true});
+    window.addEventListener('resize', hideTooltip);
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
+    document.addEventListener('touchstart', (e) => {
+      if (!e.target.closest('.cell')) hideTooltip();
+    }, {passive:true});
   </script>
 </body>
 </html>
 
      
 
+  
      
-     
- 
-   
- 
-    
-     
-      
