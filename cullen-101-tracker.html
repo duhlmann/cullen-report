@@ -295,19 +295,43 @@
 
       const label = status==='done'?'Done (verified)':status==='progress'?'In Progress (verified)':status==='todo'?'Not Done (verified gap)':'Unknown / Unverified';
       const recText = recommendations[n-1] || `Recommendation ${n}`;
-      cell.title = recText; // native tooltip fallback
-  
-      const src = sourcesByRec[n];
+cell.title = recText; // native tooltip fallback
+const src = sourcesByRec[n];
 
-     let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+
 if (src && src.length > 0) {
   html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
   for (const s of src) {
-    html += `<li>${autoLink(s)}</li>`;
+    const isNote = s.trim().toLowerCase().startsWith('note:');
+    const body = isNote ? s.replace(/^note:\s*/i, '') : s;
+    html += `<li class="${isNote ? 'note-item' : ''}">${isNote ? '<strong>Note:</strong> ' : ''}${autoLink(body)}</li>`;
   }
   html += `</ul></div>`;
 } else {
   html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
+}
+
+// events
+cell.addEventListener('mouseenter', () => showTooltip(cell, html));
+cell.addEventListener('focus', () => showTooltip(cell, html));
+cell.addEventListener('mouseleave', hideTooltip);
+cell.addEventListener('blur', hideTooltip);
+
+grid.appendChild(cell);
+// END: safe tooltip block with Note: styling
+Two things to double-check
+You keep the lines above this block that set up status, cell, and label. They look like:
+
+js
+Copy code
+const status = statusByRec[n] || "unknown";
+const cell = document.createElement('div');
+// ...
+const label = status === 'done' ? 'Done (verified)'
+  : status === 'progress' ? 'In Progress (verified)'
+  : status === 'todo' ? 'Not Done (verified gap)'
+  : 'Unknown / Unverified';
 }
 
 
