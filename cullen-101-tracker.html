@@ -12,7 +12,8 @@
       --text:#e5e7eb;
       --accent:#6ee7b7;  /* Done */
       --warn:#facc15;    /* In Progress */
-      --todo:#ef4444;    /* Not Done */
+      --todo:#ef4444;    /* Not Done (use sparingly, only when verified) */
+      --unknown:#6b7280; /* Unknown / Unverified */
     }
     html,body{
       margin:0;
@@ -50,80 +51,80 @@
     .done{ background:var(--accent) }
     .progress{ background:var(--warn) }
     .todo{ background:var(--todo) }
+    .unknown{ background:var(--unknown); color:#fff }
 
     .hint{ color:var(--muted); font-size:12px; margin-top:10px }
+    .note{ color:var(--muted); font-size:12px; margin-top:10px; line-height:1.4 }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Cullen Commission — 101 Recommendations Tracker</h1>
-    <p>101 boxes = 101 recommendations. Hover a box to see its status.</p>
+    <p>Colors show only <strong>verified</strong> statuses. Gray = not yet verified.</p>
 
     <div class="card">
       <div class="legend" aria-hidden="true">
-        <div class="legend-item"><span class="swatch" style="background:var(--accent)"></span> Done</div>
-        <div class="legend-item"><span class="swatch" style="background:var(--warn)"></span> In&nbsp;Progress</div>
-        <div class="legend-item"><span class="swatch" style="background:var(--todo)"></span> Not&nbsp;Done</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--accent)"></span> Done (verified)</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--warn)"></span> In&nbsp;Progress (verified)</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--unknown)"></span> Unknown / Unverified</div>
+        <!-- Optional: only use red if we have solid evidence something is not done -->
+        <!-- <div class="legend-item"><span class="swatch" style="background:var(--todo)"></span> Not&nbsp;Done (verified)</div> -->
       </div>
 
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
-      <div class="hint">Tip: hover a square to see its label.</div>
+      <div class="note">
+        Source snapshots: B.C. “Quick Glance” progress page (Aug 7, 2025) and IJF overview (Jan 20, 2025). We will update cells from gray to colors as items are verified. 
+      </div>
     </div>
   </div>
 
   <script>
-    // --- FIXED STATUS LOOKUP (real examples from BC gov Quick Glance, Aug 2025) ---
+    // --- VERIFIED STATUS LOOKUP ---
     // Key = recommendation number, Value = "done" | "progress" | "todo"
+    // (We default everything else to "unknown" so we don't mislabel.)
     const statusByRec = {
       // Corporate ownership transparency
-      52: "progress",  // Pan-Canadian beneficial ownership registry (created in law, not fully live)
+      52: "progress",  // Pan-Canadian beneficial ownership registry: created in law / moving toward live
 
       // Real estate
-      33: "done",      // Land Owner Transparency Registry search fees eliminated
+      33: "done",      // LOTR search fees eliminated for LE/regulators
 
       // Gambling
-      5:  "progress",  // Casinos: movement toward verified/known play
+      5:  "progress",  // Movement toward verified/known play (ID checks / verified play expansion)
 
       // Financial sector
-      51: "done",      // New MSB regime under BCFSA
-      85: "done",      // PST changes closed refund loophole for exported vehicles
-      84: "progress",  // Vehicle export regulation (partly implemented)
+      51: "done",      // Provincial MSB regulatory regime under BCFSA
+      85: "done",      // PST changes to close refund loophole tied to exported vehicles
+      84: "progress",  // Vehicle export regulation measures underway
 
       // Public safety / coordination
-      91: "progress",  // New Superintendence & Evaluation Unit
-      63: "progress",  // Stronger links with Law Society of BC
-      64: "progress",  // Same cluster
-      65: "progress",  // Same cluster
+      91: "progress",  // Superintendence & Evaluation Unit for ML investigations
+      63: "progress",  // Stronger referral/coordination with Law Society of BC
+      64: "progress",
+      65: "progress",
 
       // Civil forfeiture
-      101: "done"      // Unexplained Wealth Orders (UWO) regime introduced
+      101: "done"      // Unexplained Wealth Orders regime introduced
     };
 
     const grid = document.getElementById('grid');
 
-    // --- CREATE CELLS ---
+    // --- CREATE CELLS (default to "unknown" unless verified above) ---
     for (let n = 1; n <= 101; n++) {
+      const status = statusByRec[n] || "unknown";
       const cell = document.createElement('div');
-
-      // Use fixed status if we have one, else default to "todo"
-      const status = statusByRec[n] || "todo";
-
       cell.className = `cell ${status}`;
       cell.textContent = n;
 
-      // Tooltip shows number + status
       const label =
-        status === 'done' ? 'Done' :
-        status === 'progress' ? 'In Progress' :
-        'Not Done';
-      cell.title = `Recommendation ${n} — Status: ${label}`;
+        status === 'done' ? 'Done (verified)' :
+        status === 'progress' ? 'In Progress (verified)' :
+        status === 'todo' ? 'Not Done (verified)' :
+        'Unknown / Unverified';
 
+      cell.title = `Recommendation ${n} — ${label}`;
       grid.appendChild(cell);
     }
   </script>
 </body>
 </html>
-
-   
-  
-   
