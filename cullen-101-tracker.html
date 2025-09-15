@@ -53,7 +53,7 @@
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
 
       <div class="note">
-        We only color items where we’ve found solid public sources (province/federal/CPABC/LSBC). Everything else stays gray until verified.
+        We only color items where we’ve found solid public sources. Everything else stays gray until verified.
       </div>
     </div>
   </div>
@@ -118,7 +118,7 @@
       "Rec 55: Amend LS Rule 3-59 cash exception to reasonable fees only.",
       "Rec 56: Clarify LS client ID rules on source of money.",
       "Rec 57: Expand LS ID/verification to more contexts.",
-      "Rec 58: Clarify ‘directly related’ in LS trust account rule.",
+      "Rec 58: Clarify ‘directly related to legal services’ in LS trust account rule.",
       "Rec 59: LS to raise awareness on trust account limitations & info sharing.",
       "Rec 60: Remove Commentary 3.1(a) from LS Code.",
       "Rec 61: AML training for LS trust auditors/investigators.",
@@ -262,20 +262,22 @@
         'Unknown / Unverified';
 
       const recText = recommendations[n-1] || `Recommendation ${n}`;
-      cell.title = `${recText} — Status: ${label}`;
+      // IMPORTANT: this is what drives the hover tooltip
+      cell.setAttribute('title', `${recText} — Status: ${label}`);
+
       grid.appendChild(cell);
     }
   </script>
 </body>
 </html>
 
- 
-      
-    
+     
 
      
-      
      
-     
+ 
+   
+ 
+    
      
       
