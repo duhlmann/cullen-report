@@ -49,179 +49,89 @@
   </div>
 
   <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+
   <script>
-  /* --- Data only (we'll add the drawing code next) --- */
+    /* --- Minimal data to confirm grid renders --- */
+    const recommendations = Array.from({ length: 101 }, (_, i) => `Rec ${i + 1}`);
+    const statusByRec = { 4:"todo", 2:"done", 5:"progress", 25:"done", 33:"done" };
+    const sourcesByRec = {
+      2: ["BC Gov – Public Safety: Deputy Ministers’ Committee on AML maintained", "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"],
+      4: ["BC Gov – Gambling: Source-of-funds threshold remains $10,000 (Cullen asked for $3,000)", "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"],
+      5: ["BC Gov – Gambling: Casinos phasing in account-based known play, target 100% by 2029", "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"]
+    };
 
-  // keep it simple for now — names will just be "Rec 1", "Rec 2", ... (we can swap in full texts later)
-  const recommendations = Array.from({ length: 101 }, (_, i) => `Rec ${i + 1}`);
+    /* --- Tooltip helpers --- */
+    const grid = document.getElementById('grid');
+    const tooltip = document.getElementById('tooltip');
 
-  // statuses for the ones we’re certain about (we can add more later)
-  const statusByRec = {
-    1: "unknown",   // no independent AML Commissioner yet
-    2: "done",      // DMs’ Committee + Secretariat continue
-    3: "unknown",   // AML liaisons not confirmed publicly
-    4: "todo",      // SOF threshold still $10k (not $3k)
-    5: "progress",  // known-play moving toward 100% by 2029
+    function autoLink(text){
+      const urlRegex = /(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
+      return text.replace(urlRegex, (m) => {
+        const url = m.startsWith('http') ? m : `https://${m}`;
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`;
+      });
+    }
+    function showTooltip(target, html){
+      tooltip.innerHTML = html;
+      tooltip.style.display = 'block';
+      tooltip.setAttribute('aria-hidden','false');
+      const rect = target.getBoundingClientRect();
+      const pad = 8;
+      const ttRect = tooltip.getBoundingClientRect();
+      let top = rect.top - ttRect.height - pad;
+      if (top < 8) top = rect.bottom + pad;
+      let left = rect.left + (rect.width - ttRect.width)/2;
+      left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
+      tooltip.style.top = `${top + window.scrollY}px`;
+      tooltip.style.left = `${left + window.scrollX}px`;
+    }
+    function hideTooltip(){
+      tooltip.style.display = 'none';
+      tooltip.setAttribute('aria-hidden','true');
+      tooltip.innerHTML = '';
+    }
 
-    25: "done",
-    33: "done",
-    52: "progress",
-    69: "done",
-    71: "done",
-    72: "done",
-    78: "done",
-    85: "done",
-    89: "done",
-    91: "done",
-    96: "done",
-    100: "done",
-    101: "done"
-  };
+    /* --- Build the grid --- */
+    for (let n = 1; n <= 101; n++) {
+      const status = statusByRec[n] || "unknown";
+      const cell = document.createElement('div');
+      cell.className = `cell ${status}`;
+      cell.textContent = n;
+      cell.setAttribute('role','gridcell');
+      cell.setAttribute('tabindex','0');
 
-  // sources for 1–5 only (we’ll add the rest after we see the grid working)
-  const sourcesByRec = {
-    1: [
-      "Note: Cullen wanted a standalone ‘AML Commissioner’. B.C. has not created this office; instead there is a Superintendence & Evaluation Unit under Public Safety. Official pages still show no independent commissioner. Status: Unknown (gray)."
-    ],
-    2: [
-      "BC Gov – Public Safety: Deputy Ministers’ Committee on AML and AML Secretariat maintained",
-      "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
-    ],
-    3: [
-      "Note: Cullen recommended AML liaison officers in agencies. No direct public proof of dedicated posts; likely internal. Status: Unknown (gray)."
-    ],
-    4: [
-      "BC Gov – Gambling: Source-of-funds threshold remains $10,000 (Cullen asked for $3,000)",
-      "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"
-    ],
-    5: [
-      "BC Gov – Gambling: Casinos phasing in account-based known play, target 100% by 2029",
-      "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"
-    ]
-  };
-</script>
-  <script>
-  /* --- Draw the grid + tooltips (simple, stable version) --- */
+      const label =
+        status === 'done' ? 'Done (verified)' :
+        status === 'progress' ? 'In Progress (verified)' :
+        status === 'todo' ? 'Not Done (verified gap)' :
+        'Unknown / Unverified';
 
-  const grid = document.getElementById('grid');
-  const tooltip = document.getElementById('tooltip');
+      const recText = recommendations[n-1] || `Recommendation ${n}`;
+      cell.title = recText; // native tooltip fallback
 
-  function autoLink(text){
-    const urlRegex = /(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
-    return text.replace(urlRegex, (m) => {
-      const url = m.startsWith('http') ? m : `https://${m}`;
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`;
-    });
-  }
-
-  function showTooltip(target, html){
-    tooltip.innerHTML = html;
-    tooltip.style.display = 'block';
-    tooltip.setAttribute('aria-hidden', 'false');
-
-    const rect = target.getBoundingClientRect();
-    const pad = 8;
-    const ttRect = tooltip.getBoundingClientRect();
-
-    let top = rect.top - ttRect.height - pad;
-    if (top < 8) top = rect.bottom + pad;
-
-    let left = rect.left + (rect.width - ttRect.width)/2;
-    left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
-
-    tooltip.style.top = `${top + window.scrollY}px`;
-    tooltip.style.left = `${left + window.scrollX}px`;
-  }
-
-  function hideTooltip(){
-    tooltip.style.display = 'none';
-    tooltip.setAttribute('aria-hidden','true');
-    tooltip.innerHTML = '';
-  }
-
-  // build 101 cells
-  for (let n = 1; n <= 101; n++) {
-    const status = statusByRec[n] || "unknown";
-    const cell = document.createElement('div');
-    cell.className = `cell ${status}`;
-    cell.textContent = n;
-    cell.setAttribute('role','gridcell');
-    cell.setAttribute('tabindex','0');
-
-    const label =
-      status === 'done' ? 'Done (verified)' :
-      status === 'progress' ? 'In Progress (verified)' :
-      status === 'todo' ? 'Not Done (verified gap)' :
-      'Unknown / Unverified';
-
-    const recText = recommendations[n-1] || `Recommendation ${n}`;
-    cell.title = recText; // native tooltip fallback
-
-    const src = sourcesByRec[n];
-    let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
-
-    if (src && src.length > 0) {
-      html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
-      for (const s of src) {
-        html += `<li>${autoLink(s)}</li>`;
+      const src = sourcesByRec[n];
+      let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+      if (src && src.length > 0) {
+        html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
+        for (const s of src) {
+          html += `<li>${autoLink(s)}</li>`;
+        }
+        html += `</ul></div>`;
+      } else {
+        html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
       }
-      html += `</ul></div>`;
-    } else {
-      html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
+
+      cell.addEventListener('mouseenter', () => showTooltip(cell, html));
+      cell.addEventListener('focus', () => showTooltip(cell, html));
+      cell.addEventListener('mouseleave', hideTooltip);
+      cell.addEventListener('blur', hideTooltip);
+
+      grid.appendChild(cell);
     }
 
-    // events
-    cell.addEventListener('mouseenter', () => showTooltip(cell, html));
-    cell.addEventListener('focus', () => showTooltip(cell, html));
-    cell.addEventListener('mouseleave', hideTooltip);
-    cell.addEventListener('blur', hideTooltip);
-
-    grid.appendChild(cell);
-  }
-
-  // global listeners
-  window.addEventListener('scroll', hideTooltip, {passive:true});
-  window.addEventListener('resize', hideTooltip);
-  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
-    const grid = document.getElementById("grid");
-
-for (let n = 1; n <= 101; n++) {
-  const recText = recommendations[n - 1] || `Recommendation ${n}`;
-  const status = statusByRec[n] || "unknown";
-  const label = status.charAt(0).toUpperCase() + status.slice(1);
-
-  const cell = document.createElement("div");
-  cell.className = `cell ${status}`;
-  cell.textContent = n;
-  cell.setAttribute("role","button");
-  cell.setAttribute("tabindex","0");
-  cell.setAttribute("aria-label", `${recText} — ${label}`);
-
-  const src = sourcesByRec[n];
-  let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
-  if (src && src.length > 0) {
-    html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
-    for (const s of src) {
-      html += `<li>${autoLink(s)}</li>`;
-    }
-    html += `</ul></div>`;
-  } else {
-    html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
-  }
-
-  // tooltip events
-  cell.addEventListener("mouseenter",()=>showTooltip(cell,html));
-  cell.addEventListener("focus",()=>showTooltip(cell,html));
-  cell.addEventListener("mouseleave",hideTooltip);
-  cell.addEventListener("blur",hideTooltip);
-
-  grid.appendChild(cell);
-}
-
-// hide tooltip on scroll/resize/escape
-window.addEventListener("scroll", hideTooltip);
-window.addEventListener("resize", hideTooltip);
-window.addEventListener("keydown", e => { if (e.key === "Escape") hideTooltip(); });
-</script>
-    
-
+    window.addEventListener('scroll', hideTooltip, {passive:true});
+    window.addEventListener('resize', hideTooltip);
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
+  </script>
+</body>
+</html>
