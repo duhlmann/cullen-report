@@ -6,61 +6,46 @@
   <title>Cullen Commission — 101 Recommendations Tracker</title>
   <style>
     :root{
-      --bg:#0b0f19;
-      --card:#121827;
-      --muted:#9aa4b2;
-      --text:#e5e7eb;
-      --accent:#6ee7b7;  /* Done (verified) */
-      --warn:#facc15;    /* In Progress (verified) */
-      --todo:#ef4444;    /* Not Done (verified gap) */
-      --unknown:#6b7280; /* Unknown / Unverified */
-      --tooltip:#111827; /* tooltip bg */
-      --tooltip-text:#e5e7eb;
-      --tooltip-shadow: 0 8px 24px rgba(0,0,0,.35);
-      --link:#93c5fd;
+      --bg:#0b0f19; --card:#121827; --muted:#9aa4b2; --text:#e5e7eb;
+      --accent:#6ee7b7; --warn:#facc15; --todo:#ef4444; --unknown:#6b7280;
+      --tooltip:#111827; --tooltip-text:#e5e7eb; --tooltip-shadow:0 8px 24px rgba(0,0,0,.35); --link:#93c5fd;
     }
-    html,body{margin:0;background:var(--bg);color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
     .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
-    h1{margin:0 0 8px}
-    p{color:var(--muted);margin:0 0 16px}
-    .card{background:var(--card);border-radius:16px;padding:16px;
-      box-shadow:0 6px 18px rgba(0,0,0,.2)}
+    h1{margin:0 0 8px} p{color:var(--muted);margin:0 0 16px}
+    .card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
     .legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
     .legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
     .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
     #grid{display:grid;grid-template-columns: repeat(10, 1fr);gap:6px;margin-top:12px}
-    .cell{width:30px;height:30px;border-radius:6px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;
-      font-size:10px;font-weight:bold;color:#000;user-select:none;outline:none}
+    .cell{width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:#000;user-select:none;outline:none}
     .cell:focus{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
-    .done{background:var(--accent)}
-    .progress{background:var(--warn)}
-    .todo{background:var(--todo)}
-    .unknown{background:var(--unknown);color:#fff}
+    .done{background:var(--accent)} .progress{background:var(--warn)} .todo{background:var(--todo)} .unknown{background:var(--unknown);color:#fff}
     .note{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.4}
+    .tooltip{position:fixed;z-index:9999;max-width:min(520px,92vw);background:var(--tooltip);color:var(--tooltip-text);padding:10px 12px;border-radius:10px;box-shadow:var(--tooltip-shadow);font-size:12px;line-height:1.35;display:none;pointer-events:none}
+    .tooltip strong{font-weight:600}.tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
+    .tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
+    .tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
+    .tooltip .sources ul{margin:0;padding-left:16px}
+    
 
-    /* Custom tooltip */
-    .tooltip {
-      position: fixed;
-      z-index: 9999;
-      max-width: min(520px, 92vw);
-      background: var(--tooltip);
-      color: var(--tooltip-text);
-      padding: 10px 12px;
-      border-radius: 10px;
-      box-shadow: var(--tooltip-shadow);
-      font-size: 12px;
-      line-height: 1.35;
-      display: none; /* hidden by default */
-      pointer-events: none;
-    }
-    .tooltip strong { font-weight:600 }
-    .tooltip .status {opacity:.9; font-style: italic; display:block; margin-top:6px}
-    .tooltip .sources { margin-top:8px; border-top:1px solid rgba(255,255,255,.08); padding-top:6px }
-    .tooltip .sources-title { font-size:11px; opacity:.8; margin-bottom:4px; display:block }
-    .tooltip .sources ul { margin:0; padding-left:16px }
-    .tooltip a { color: var(--link); text-decoration: underline; word-break: break-word }
+/* Style for Notes inside the tooltip source list */
+.tooltip .sources li.note-item {
+  color: var(--muted);
+  font-style: italic;
+  list-style: none;
+  margin-left: -1em; /* align with bullet list */
+  padding-left: 1.4em;
+  position: relative;
+}
+.tooltip .sources li.note-item::before {
+  content: "📝";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+    .tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
   </style>
 </head>
 <body>
@@ -77,17 +62,14 @@
       </div>
 
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
-      <div class="note">
-        We only color items where we’ve found solid sources (province/federal/LSBC/CPABC). Everything else stays gray until verified.
-      </div>
+      <div class="note">We only color items where we’ve found solid sources. Everything else stays gray until verified.</div>
     </div>
   </div>
 
-  <!-- one shared tooltip element -->
   <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
 
   <script>
-    /* --- FULL TEXT OF 101 RECOMMENDATIONS (tooltips) --- */
+    /* --- Full recommendation texts --- */
     const recommendations = [
       "Rec 1: Establish an independent Anti-Money Laundering (AML) Commissioner.",
       "Rec 2: Maintain the Deputy Ministers’ Committee on AML and the AML Secretariat.",
@@ -192,249 +174,169 @@
       "Rec 101: Develop unexplained wealth order regime in BC."
     ];
 
-    /* --- VERIFIED STATUS LOOKUP (we color only what we can back up) --- */
-    const statusByRec = {
-      // Corporate / beneficial ownership
-      52: "progress",
-
-      // Real estate / LOTR / Mortgages (MSA + federal coverage)
-      33: "done",
-      25: "done",
-      14: "progress",
-      15: "progress",
-      16: "progress",
-      17: "progress",
-      18: "progress",
-      19: "progress",
-      20: "progress",
-      22: "progress",
-      23: "progress",
-      26: "progress",
-      29: "progress",
-
-      // Gambling
-      5:  "progress",
-      4:  "todo",
-
-      // Financial sector
-      51: "progress",
-      85: "done",
-
-      // Public safety / coordination
-      91: "done",
-      63: "progress",
-      64: "progress",
-      65: "progress",
-
-      // Professions (lawyers/notaries/accountants)
-      55: "progress",
-      56: "progress",
-      58: "progress",
-      62: "progress",
-      66: "progress",
-      67: "progress",
-      68: "progress",
-      69: "done",
-      70: "progress",
-      71: "done",
-      72: "done",
-      73: "progress",
-      74: "progress",
-      75: "progress",
-      76: "unknown",
-      77: "progress",
-      78: "done",
-      79: "progress",
-      80: "progress",
-      81: "progress",
-
-      // Luxury goods (conservative)
-      82: "unknown",
-      83: "unknown",
-      84: "unknown",
-
-      // Virtual assets / TBML (conservative)
-      86: "unknown",
-      87: "unknown",
-      88: "unknown",
-
-      // Law enforcement & forfeiture
-      89: "done",
-      90: "progress",
-      92: "unknown",
-      93: "unknown",
-      94: "progress",
-      95: "unknown",
-      96: "done",
-      97: "unknown",
-      98: "progress",
-      99: "progress",
-      100:"done",
-
-      // Civil forfeiture capstone
-      101:"done"
-    };
-
-    /* --- SOURCES PER RECOMMENDATION ---
-       Put one or more strings per rec. You can include titles and/or URLs.
-       Examples below use plain text (safe). If you want clickable links,
-       include full URLs; the tooltip will auto-link them.
-    */
+  const statusByRec = {
+  4: "todo", // Casino SOF threshold still $10k (not lowered to $3k)
+  25: "done",
+  33: "done",
+  52: "progress",
+  69: "done",
+  71: "done",
+  72: "done",
+  78: "done",
+  85: "done",
+  89: "done",
+  91: "done",
+  96: "done",
+  100: "done",
+  101: "done"
+};
+    /* --- Sources lookup --- */
     const sourcesByRec = {
-      33: [
-  "BC Gov – Real Estate: LOTR fees removed for AML/law enforcement access https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
-],
-      ],
+      1: [
+    "Note: Cullen wanted a standalone ‘AML Commissioner’. B.C. has not created this office; instead there is a Superintendence & Evaluation Unit under Public Safety. Official pages still show no independent commissioner. Status: Unknown (gray)."
+  ],
+
+  2: [
+    "BC Gov – Public Safety: Deputy Ministers’ Committee on AML and AML Secretariat maintained",
+    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+  ],
+
+  3: [
+    "Note: Cullen recommended AML liaison officers in agencies. No direct public proof of dedicated posts; likely internal. Status: Unknown (gray)."
+  ],
+
+  4: [
+    "BC Gov – Gambling: Source-of-funds threshold remains $10,000 (Cullen asked for $3,000)",
+    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"
+  ],
+
+  5: [
+    "BC Gov – Gambling: Casinos phasing in account-based known play, target 100% by 2029",
+    "Note: In progress — partial implementation at present, not yet universal",
+    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"
+  ]
+};
+
       25: [
-  "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024) https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
-],
-      14: ["BCFSA – Mortgage Services Act (in force Oct 13, 2026)"],
-      15: ["BCFSA – MSA suitability/background checks"],
-      16: ["BCFSA – MSA reporting/returns framework"],
-      17: ["BCFSA – MSA rule-making authority"],
-      18: ["BCFSA – MSA managing/principal broker role"],
-      19: ["BCFSA – MSA competency/education requirements"],
-      20: ["BCFSA – MSA penalties"],
-      22: ["BCFSA – MSA unregistered brokering enforcement"],
-      23: ["BCFSA – MSA appeals/discipline modernization"],
-      26: ["BC Gov – Real Estate: PCMLTFA coverage imposes source-of-funds duties"],
-      29: ["BCFSA – MSA licensing for private mortgage lenders"],
-
-      5:  ["BC Gov – Gambling: known-play roadmap to 2029; ID at entry"],
-      4:  ["BC Gov – Gambling: SOF threshold still $10,000 (Cullen asked $3,000)"],
-
-      51: ["BC Gov – Financial Sector: MSB Act introduced (in force by regulation)"],
-    
-      91: ["BC Gov – Public Safety: Superintendence & Evaluation Unit created"],
-      63: ["BC Gov – Public Safety: LSBC referrals strengthened"],
-      64: ["BC Gov – Public Safety: LSBC evidence-sharing process"],
-      65: ["BC Gov – Public Safety: public awareness on oversight"],
-
-      55: ["LSBC – Rule 3-59 cash exception revision process"],
-      56: ["LSBC – Client ID/source-of-money guidance updates"],
-      58: ["LSBC – Advisory clarifying Rule 3-58.1 (‘directly related’)"],
-      62: ["LSBC – Tabled AML training for high-risk lawyers"],
-
-      66: ["BC Gov – Lawyers/Notaries: Legal Professions Act (notaries’ fines to $250k)"],
-      67: ["FINTRAC/BC Notaries – SOF documentation obligations"],
-      68: ["BC Notaries – AML training offerings"],
-
-      69: ["CPABC Code – Rule on reporting FINTRAC non-compliance"],
-      70: ["BC Gov – Professions: sector analysis of non-CPABC financial pros"],
-      71: ["PCMLTFA – accountants as reporting entities"],
-      72: ["CPABC Rule 219 – Client ID/verification & SOF"],
-      73: ["CPABC Practice Review – trust account usage reviews"],
-      74: ["CPABC Practice Review – sampling (incl. trust accounts)"],
-      75: ["CPABC Discipline/Review – cash acceptance oversight"],
-      77: ["CPABC – declarations re: PCMLTFA-regulated activities"],
-      78: ["CPABC Practice Review – AML compliance integrated"],
-      79: ["CPABC – AML professional development programs"],
-      80: ["CPABC – liaison with FINTRAC"],
-      81: ["CPABC – cooperation with law enforcement"],
-
-      89: ["BC Gov – Public Safety: police to consider ML at outset"],
-      90: ["BC Gov – Public Safety: ML/asset-seizure training modules"],
-      94: ["BC Gov – Public Safety: CFSEU resourcing"],
-      96: ["BC Gov – Public Safety: police to consider civil forfeiture"],
-      98: ["BC Gov – Public Safety: criminal forfeiture training"],
-      99: ["BC Gov – Public Safety/Civil Forfeiture: CFO capacity expanded"],
-      100:["BC Gov – Public Safety: CFO on government budget model"],
-      101:["BC Gov – Civil Forfeiture: Unexplained Wealth Orders enacted/used"],
-
-      52: ["BC Gov – Corporate ownership transparency; federal registry note"],
-
-      // Unknown items intentionally have no sources; tooltip will say “not yet verified”.
+        "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
+      ],
+      33: [
+        "BC Gov – Real Estate: LOTR fees removed for AML/law enforcement access",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
+      ],
+      52: [
+        "BC Gov – Corporate Transparency: provincial support for pan-Canadian beneficial ownership registry",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/corporate-ownership-transparency"
+      ],
+      69: [
+        "CPABC Code of Professional Conduct – Rule requires members to report non-compliance with FINTRAC obligations",
+        "https://www.bccpa.ca/news-events/latest-news/2021/06/23/cpabc-releases-new-anti-money-laundering-guidance"
+      ],
+      71: [
+        "PCMLTFA – accountants and accounting firms as reporting entities (federal coverage)",
+        "https://www.fintrac-canafe.gc.ca/guidance-directives/overview-apercu/pcmltfa-lrpcfat/pcmltfa-lrpcfat-eng"
+      ],
+      72: [
+        "CPABC Rule 219 – Client ID, verification, and source-of-funds obligations",
+        "https://www.bccpa.ca/members/practice-regulations/client-identification-verification"
+      ],
+      78: [
+        "CPABC Practice Review – AML compliance integrated into practice inspections",
+        "https://www.bccpa.ca/members/practice-regulations/practice-review"
+      ],
+      85: [
+        "BC Gov – Financial Sector: PST export-vehicle refund loophole closed",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/financial-sector"
+      ],
+      89: [
+        "BC Gov – Public Safety: Police consider ML at outset of profit-driven crime investigations",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      91: [
+        "BC Gov – Public Safety: Superintendence & Evaluation Unit created (ML intel/investigation)",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      96: [
+        "BC Gov – Public Safety: Police consider civil asset forfeiture in profit-motivated crimes",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      100: [
+        "BC Gov – Public Safety: Civil Forfeiture Office moved to government budget model",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      101: [
+        "BC Gov – Civil Forfeiture: Unexplained Wealth Orders enacted and in use",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ]
     };
 
-    /* --- BUILD GRID + TOOLTIP --- */
+    /* --- Tooltip helpers --- */
     const grid = document.getElementById('grid');
     const tooltip = document.getElementById('tooltip');
 
     function autoLink(text){
-      // turns bare URLs into <a href="...">...</a>
-      const urlRegex = /(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
-      return text.replace(urlRegex, (m) => {
-        const url = m.startsWith('http') ? m : `https://${m}`;
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`;
-      });
+      const urlRegex=/(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
+      return text.replace(urlRegex,(m)=>{const url=m.startsWith('http')?m:`https://${m}`;return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`});
     }
-
-    function showTooltip(target, html) {
-      tooltip.innerHTML = html;
-      tooltip.style.display = 'block';
-      tooltip.setAttribute('aria-hidden', 'false');
-
-      const rect = target.getBoundingClientRect();
-      const padding = 8;
-      const ttRect = tooltip.getBoundingClientRect();
-
-      let top = rect.top - ttRect.height - padding;
-      if (top < 8) top = rect.bottom + padding;
-
-      let left = rect.left + (rect.width - ttRect.width)/2;
-      left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
-
-      tooltip.style.top = `${top + window.scrollY}px`;
-      tooltip.style.left = `${left + window.scrollX}px`;
+    function showTooltip(target, html){
+      tooltip.innerHTML=html; tooltip.style.display='block'; tooltip.setAttribute('aria-hidden','false');
+      const rect=target.getBoundingClientRect(); const pad=8; const ttRect=tooltip.getBoundingClientRect();
+      let top=rect.top-ttRect.height-pad; if(top<8) top=rect.bottom+pad;
+      let left=rect.left+(rect.width-ttRect.width)/2; left=Math.max(8,Math.min(left,window.innerWidth-ttRect.width-8));
+      tooltip.style.top=`${top+window.scrollY}px`; tooltip.style.left=`${left+window.scrollX}px`;
     }
-    function hideTooltip(){
-      tooltip.style.display = 'none';
-      tooltip.setAttribute('aria-hidden','true');
-      tooltip.innerHTML = '';
-    }
+    function hideTooltip(){ tooltip.style.display='none'; tooltip.setAttribute('aria-hidden','true'); tooltip.innerHTML=''; }
 
-    for (let n = 1; n <= 101; n++) {
-      const status = statusByRec[n] || "unknown";
-      const cell = document.createElement('div');
-      cell.className = `cell ${status}`;
-      cell.textContent = n;
-      cell.setAttribute('role','gridcell');
-      cell.setAttribute('tabindex','0');
-      cell.setAttribute('aria-label', `Recommendation ${n}`);
+    for(let n=1;n<=101;n++){
+      const status=statusByRec[n]||"unknown";
+      const cell=document.createElement('div');
+      cell.className=`cell ${status}`; cell.textContent=n; cell.setAttribute('role','gridcell'); cell.setAttribute('tabindex','0');
 
-      const label =
-        status === 'done' ? 'Done (verified)' :
-        status === 'progress' ? 'In Progress (verified)' :
-        status === 'todo' ? 'Not Done (verified gap)' :
-        'Unknown / Unverified';
-
+      const label = status==='done'?'Done (verified)':status==='progress'?'In Progress (verified)':status==='todo'?'Not Done (verified gap)':'Unknown / Unverified';
       const recText = recommendations[n-1] || `Recommendation ${n}`;
-
-      // Build sources list for this rec, if any
+      cell.title = recText; // native tooltip fallback
+  
       const src = sourcesByRec[n];
-      let sourcesHTML = '';
-      if (status === 'unknown' || !src || src.length === 0) {
-        sourcesHTML = `<div class="sources"><span class="sources-title">Source</span><ul><li>Not yet verified</li></ul></div>`;
-      } else {
-        const items = src.map(s => `<li>${autoLink(s)}</li>`).join('');
-        sourcesHTML = `<div class="sources"><span class="sources-title">Sources</span><ul>${items}</ul></div>`;
-      }
 
-      const tipHTML = `<strong>${recText}</strong><span class="status">Status: ${label}</span>${sourcesHTML}`;
+      let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+if (src && src.length > 0) {
+  html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
+  for (const s of src) {
+    const isNote = s.trim().toLowerCase().startsWith('note:');
+    const body = isNote ? s.replace(/^note:\s*/i, '') : s;
+    html += `<li class="${isNote ? 'note-item' : ''}">${isNote ? '<strong>Note:</strong> ' : ''}${autoLink(body)}</li>`;
+  }
+  html += `</ul></div>`;
+} else {
+  html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
+}
 
-      // mouse
-      cell.addEventListener('mouseenter', () => showTooltip(cell, tipHTML));
-      cell.addEventListener('mouseleave', hideTooltip);
-      // keyboard
-      cell.addEventListener('focus', () => showTooltip(cell, tipHTML));
-      cell.addEventListener('blur', hideTooltip);
-      // touch (tap to show; tap elsewhere to hide)
-      cell.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        showTooltip(cell, tipHTML);
-      }, {passive:false});
+
+      cell.addEventListener('mouseenter',()=>showTooltip(cell,html));
+      cell.addEventListener('focus',()=>showTooltip(cell,html));
+      cell.addEventListener('mouseleave',hideTooltip);
+      cell.addEventListener('blur',hideTooltip);
 
       grid.appendChild(cell);
     }
 
-    // close tooltip on scroll/resize/escape/tap outside
-    window.addEventListener('scroll', hideTooltip, {passive:true});
+    // hide tooltip on scroll/resize/escape
+    window.addEventListener('scroll', hideTooltip);
     window.addEventListener('resize', hideTooltip);
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
-    document.addEventListener('touchstart', (e) => {
-      if (!e.target.closest('.cell')) hideTooltip();
-    }, {passive:true});
+    window.addEventListener('keydown', e => { if (e.key === "Escape") hideTooltip(); });
   </script>
 </body>
 </html>
+
+ 
+    
+   
+
+ 
+     
       
+    
+
+      
+
