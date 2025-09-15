@@ -27,24 +27,6 @@
     .tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
     .tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
     .tooltip .sources ul{margin:0;padding-left:16px}
-    
-
-/* Style for Notes inside the tooltip source list */
-.tooltip .sources li.note-item {
-  color: var(--muted);
-  font-style: italic;
-  list-style: none;
-  margin-left: -1em; /* align with bullet list */
-  padding-left: 1.4em;
-  position: relative;
-}
-.tooltip .sources li.note-item::before {
-  content: "📝";
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
     .tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
   </style>
 </head>
@@ -174,49 +156,16 @@
       "Rec 101: Develop unexplained wealth order regime in BC."
     ];
 
-  const statusByRec = {
-  4: "todo", // Casino SOF threshold still $10k (not lowered to $3k)
-  25: "done",
-  33: "done",
-  52: "progress",
-  69: "done",
-  71: "done",
-  72: "done",
-  78: "done",
-  85: "done",
-  89: "done",
-  91: "done",
-  96: "done",
-  100: "done",
-  101: "done"
-};
+    /* --- Status lookup --- */
+    const statusByRec = {
+      25:"done", 33:"done", 52:"progress",
+      69:"done", 71:"done", 72:"done", 78:"done",
+      85:"done", 89:"done", 91:"done", 96:"done",
+      100:"done", 101:"done"
+    };
+
     /* --- Sources lookup --- */
     const sourcesByRec = {
-      1: [
-    "Note: Cullen wanted a standalone ‘AML Commissioner’. B.C. has not created this office; instead there is a Superintendence & Evaluation Unit under Public Safety. Official pages still show no independent commissioner. Status: Unknown (gray)."
-  ],
-
-  2: [
-    "BC Gov – Public Safety: Deputy Ministers’ Committee on AML and AML Secretariat maintained",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
-  ],
-
-  3: [
-    "Note: Cullen recommended AML liaison officers in agencies. No direct public proof of dedicated posts; likely internal. Status: Unknown (gray)."
-  ],
-
-  4: [
-    "BC Gov – Gambling: Source-of-funds threshold remains $10,000 (Cullen asked for $3,000)",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"
-  ],
-
-  5: [
-    "BC Gov – Gambling: Casinos phasing in account-based known play, target 100% by 2029",
-    "Note: In progress — partial implementation at present, not yet universal",
-    "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"
-  ]
-};
-
       25: [
         "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)",
         "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
@@ -300,18 +249,15 @@
       const src = sourcesByRec[n];
 
       let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
-if (src && src.length > 0) {
-  html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
-  for (const s of src) {
-    const isNote = s.trim().toLowerCase().startsWith('note:');
-    const body = isNote ? s.replace(/^note:\s*/i, '') : s;
-    html += `<li class="${isNote ? 'note-item' : ''}">${isNote ? '<strong>Note:</strong> ' : ''}${autoLink(body)}</li>`;
-  }
-  html += `</ul></div>`;
-} else {
-  html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
-}
-
+      if (src && src.length > 0) {
+        html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
+        for (const s of src) {
+          html += `<li>${autoLink(s)}</li>`;
+        }
+        html += `</ul></div>`;
+      } else {
+        html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
+      }
 
       cell.addEventListener('mouseenter',()=>showTooltip(cell,html));
       cell.addEventListener('focus',()=>showTooltip(cell,html));
@@ -329,6 +275,12 @@ if (src && src.length > 0) {
 </body>
 </html>
 
+
+ 
+   
+     
+     
+ 
  
     
    
