@@ -51,8 +51,9 @@
       </div>
 
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
+
       <div class="note">
-        Sources: BC “Quick Glance” hub and subpages (Real estate, Gambling, Financial sector, Public safety, Civil forfeiture, Lawyers/Notaries/Accountants), BCFSA Mortgage Services Act page, and federal PCMLTFA coverage for mortgage lenders. Only mapped items are colored; the rest remain gray until verified.
+        We only color items where we’ve found solid public sources (province/federal/CPABC/LSBC). Everything else stays gray until verified.
       </div>
     </div>
   </div>
@@ -163,50 +164,90 @@
       "Rec 101: Develop unexplained wealth order regime in BC."
     ];
 
-    /* --- VERIFIED STATUS LOOKUP (only mapped items; others = unknown) --- */
+    /* --- VERIFIED STATUS LOOKUP (we color only what we can back up) --- */
     const statusByRec = {
       // Corporate / beneficial ownership
-      52: "progress",  // Provincial BO steps + federal registry; pan-Canadian integration still underway. (Quick Glance hub)
+      52: "progress",
 
       // Real estate / LOTR / Mortgages (MSA + federal coverage)
-      33: "done",      // LOTR search fees eliminated. (Real estate page)
-      25: "done",      // Mortgage brokers/admins/lenders under PCMLTFA since Oct 2024. (Real estate page)
-      14: "progress",  // MSA modernizes definitions/licensing; in force Oct 13, 2026. (BCFSA)
-      15: "progress",  // Criminal/police checks = part of MSA suitability/background. (BCFSA)
-      16: "progress",  // Annual information returns/reporting in MSA framework. (BCFSA)
-      17: "progress",  // Rule-making authority under MSA. (BCFSA)
-      18: "progress",  // Managing/principal broker accountability under MSA. (BCFSA)
-      19: "progress",  // Competency/education requirements align to AML training intent. (BCFSA)
-      20: "progress",  // Increased penalties under MSA. (BCFSA)
-      22: "progress",  // Reporting unregistered brokering strengthened under MSA. (BCFSA)
-      23: "progress",  // Appeals/discipline modernization (no automatic stay) within MSA reforms. (BCFSA)
-      26: "progress",  // Mortgage lenders: source-of-funds obligations via PCMLTFA coverage. (Real estate page)
-      29: "progress",  // Private mortgage lenders brought under licensing/oversight by MSA. (BCFSA)
+      33: "done",
+      25: "done",
+      14: "progress",
+      15: "progress",
+      16: "progress",
+      17: "progress",
+      18: "progress",
+      19: "progress",
+      20: "progress",
+      22: "progress",
+      23: "progress",
+      26: "progress",
+      29: "progress",
 
       // Gambling
-      5:  "progress",  // Roadmap to 100% known play; ID at entry in place. (Gambling page + BCLC)
-      4:  "todo",      // SOF declaration threshold still $10,000 (not $3,000). (Gambling page)
+      5:  "progress",
+      4:  "todo",
 
       // Financial sector
-      51: "progress",  // MSB Act introduced; comes into force via regulation. (Financial sector page)
-      85: "done",      // PST refund loophole closed for exported vehicles. (Financial sector page)
-      // 84 kept unverified (unknown)
+      51: "progress",
+      85: "done",
 
       // Public safety / coordination
-      91: "done",      // Superintendence & Evaluation Unit created. (Public safety page)
-      63: "progress",  // LSBC-police referrals strengthened. (Public safety page)
+      91: "done",
+      63: "progress",
       64: "progress",
       65: "progress",
 
       // Professions (lawyers/notaries/accountants)
-      66: "progress",  // Notaries’ max fines to $250,000 when Legal Professions Act in force. (Lawyers/Notaries/Accountants page)
-      70: "progress",  // Province conducting sector analysis of non-CPABC financial professionals. (same page)
+      55: "progress",
+      56: "progress",
+      58: "progress",
+      62: "progress",
+      66: "progress",
+      67: "progress",
+      68: "progress",
+      69: "done",
+      70: "progress",
+      71: "done",
+      72: "done",
+      73: "progress",
+      74: "progress",
+      75: "progress",
+      76: "unknown",
+      77: "progress",
+      78: "done",
+      79: "progress",
+      80: "progress",
+      81: "progress",
 
-      // Civil forfeiture
-      101: "done",     // UWO regime enacted & used. (CFO page)
-      99: "progress"   // Civil Forfeiture Office capacity expanded. (Public safety/Civil forfeiture pages)
+      // Luxury goods (conservative)
+      82: "unknown",
+      83: "unknown",
+      84: "unknown",
+
+      // Virtual assets / TBML (conservative)
+      86: "unknown",
+      87: "unknown",
+      88: "unknown",
+
+      // Law enforcement & forfeiture
+      89: "done",
+      90: "progress",
+      92: "unknown",
+      93: "unknown",
+      94: "progress",
+      95: "unknown",
+      96: "done",
+      97: "unknown",
+      98: "progress",
+      99: "progress",
+      100:"done",
+
+      // Civil forfeiture capstone
+      101:"done"
     };
 
+    /* --- BUILD GRID --- */
     const grid = document.getElementById('grid');
     for (let n = 1; n <= 101; n++) {
       const status = statusByRec[n] || "unknown";
@@ -228,6 +269,8 @@
 </body>
 </html>
 
+ 
+      
     
 
      
