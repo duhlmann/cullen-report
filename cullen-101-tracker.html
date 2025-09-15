@@ -192,158 +192,92 @@
       "Rec 101: Develop unexplained wealth order regime in BC."
     ];
 
-    /* --- VERIFIED STATUS LOOKUP (we color only what we can back up) --- */
+    /* --- VERIFIED STATUS LOOKUP --- */
     const statusByRec = {
-      // Corporate / beneficial ownership
-      52: "progress",
-
-      // Real estate / LOTR / Mortgages (MSA + federal coverage)
-      33: "done",
-      25: "done",
-      14: "progress",
-      15: "progress",
-      16: "progress",
-      17: "progress",
-      18: "progress",
-      19: "progress",
-      20: "progress",
-      22: "progress",
-      23: "progress",
-      26: "progress",
-      29: "progress",
-
-      // Gambling
-      5:  "progress",
-      4:  "todo",
-
-      // Financial sector
-      51: "progress",
-      85: "done",
-
-      // Public safety / coordination
-      91: "done",
-      63: "progress",
-      64: "progress",
-      65: "progress",
-
-      // Professions (lawyers/notaries/accountants)
-      55: "progress",
-      56: "progress",
-      58: "progress",
-      62: "progress",
-      66: "progress",
-      67: "progress",
-      68: "progress",
-      69: "done",
-      70: "progress",
-      71: "done",
-      72: "done",
-      73: "progress",
-      74: "progress",
-      75: "progress",
-      76: "unknown",
-      77: "progress",
-      78: "done",
-      79: "progress",
-      80: "progress",
-      81: "progress",
-
-      // Luxury goods (conservative)
-      82: "unknown",
-      83: "unknown",
-      84: "unknown",
-
-      // Virtual assets / TBML (conservative)
-      86: "unknown",
-      87: "unknown",
-      88: "unknown",
-
-      // Law enforcement & forfeiture
-      89: "done",
-      90: "progress",
-      92: "unknown",
-      93: "unknown",
-      94: "progress",
-      95: "unknown",
-      96: "done",
-      97: "unknown",
-      98: "progress",
-      99: "progress",
-      100:"done",
-
-      // Civil forfeiture capstone
+      52:"progress", 33:"done", 25:"done",
+      14:"progress", 15:"progress", 16:"progress", 17:"progress", 18:"progress", 19:"progress", 20:"progress",
+      22:"progress", 23:"progress", 26:"progress", 29:"progress",
+      5:"progress", 4:"todo",
+      51:"progress", 85:"done",
+      91:"done", 63:"progress", 64:"progress", 65:"progress",
+      55:"progress", 56:"progress", 58:"progress", 62:"progress",
+      66:"progress", 67:"progress", 68:"progress",
+      69:"done", 70:"progress", 71:"done", 72:"done", 73:"progress", 74:"progress", 75:"progress", 76:"unknown", 77:"progress", 78:"done", 79:"progress", 80:"progress", 81:"progress",
+      82:"unknown", 83:"unknown", 84:"unknown",
+      86:"unknown", 87:"unknown", 88:"unknown",
+      89:"done", 90:"progress", 92:"unknown", 93:"unknown", 94:"progress", 95:"unknown", 96:"done", 97:"unknown", 98:"progress", 99:"progress", 100:"done",
       101:"done"
     };
 
-    /* --- SOURCES PER RECOMMENDATION ---
-       Put one or more strings per rec. You can include titles and/or URLs.
-       Examples below use plain text (safe). If you want clickable links,
-       include full URLs; the tooltip will auto-link them.
-    */
+    /* --- SOURCES PER RECOMMENDATION --- */
     const sourcesByRec = {
-      33: [
-  "BC Gov – Real Estate: LOTR fees removed for AML/law enforcement access https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
-],
-      ],
       25: [
-  "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024) https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
-],
-      14: ["BCFSA – Mortgage Services Act (in force Oct 13, 2026)"],
-      15: ["BCFSA – MSA suitability/background checks"],
-      16: ["BCFSA – MSA reporting/returns framework"],
-      17: ["BCFSA – MSA rule-making authority"],
-      18: ["BCFSA – MSA managing/principal broker role"],
-      19: ["BCFSA – MSA competency/education requirements"],
-      20: ["BCFSA – MSA penalties"],
-      22: ["BCFSA – MSA unregistered brokering enforcement"],
-      23: ["BCFSA – MSA appeals/discipline modernization"],
-      26: ["BC Gov – Real Estate: PCMLTFA coverage imposes source-of-funds duties"],
-      29: ["BCFSA – MSA licensing for private mortgage lenders"],
+        "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
+      ],
+      33: [
+        "BC Gov – Real Estate: LOTR fees removed for AML/law enforcement access",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
+      ],
+      85: [
+        "BC Gov – Financial Sector: PST export-vehicle refund loophole closed",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/financial-sector"
+      ],
 
-      5:  ["BC Gov – Gambling: known-play roadmap to 2029; ID at entry"],
-      4:  ["BC Gov – Gambling: SOF threshold still $10,000 (Cullen asked $3,000)"],
+      14:["BCFSA – Mortgage Services Act (in force Oct 13, 2026)"],
+      15:["BCFSA – MSA suitability/background checks"],
+      16:["BCFSA – MSA reporting/returns framework"],
+      17:["BCFSA – MSA rule-making authority"],
+      18:["BCFSA – MSA managing/principal broker role"],
+      19:["BCFSA – MSA competency/education requirements"],
+      20:["BCFSA – MSA penalties"],
+      22:["BCFSA – MSA unregistered brokering enforcement"],
+      23:["BCFSA – MSA appeals/discipline modernization"],
+      26:["BC Gov – Real Estate: PCMLTFA coverage imposes source-of-funds duties"],
+      29:["BCFSA – MSA licensing for private mortgage lenders"],
 
-      51: ["BC Gov – Financial Sector: MSB Act introduced (in force by regulation)"],
-    
-      91: ["BC Gov – Public Safety: Superintendence & Evaluation Unit created"],
-      63: ["BC Gov – Public Safety: LSBC referrals strengthened"],
-      64: ["BC Gov – Public Safety: LSBC evidence-sharing process"],
-      65: ["BC Gov – Public Safety: public awareness on oversight"],
+      5: ["BC Gov – Gambling: known-play roadmap to 2029; ID at entry"],
+      4: ["BC Gov – Gambling: SOF threshold still $10,000 (Cullen asked $3,000)"],
 
-      55: ["LSBC – Rule 3-59 cash exception revision process"],
-      56: ["LSBC – Client ID/source-of-money guidance updates"],
-      58: ["LSBC – Advisory clarifying Rule 3-58.1 (‘directly related’)"],
-      62: ["LSBC – Tabled AML training for high-risk lawyers"],
+      51:["BC Gov – Financial Sector: MSB Act introduced (in force by regulation)"],
 
-      66: ["BC Gov – Lawyers/Notaries: Legal Professions Act (notaries’ fines to $250k)"],
-      67: ["FINTRAC/BC Notaries – SOF documentation obligations"],
-      68: ["BC Notaries – AML training offerings"],
+      91:["BC Gov – Public Safety: Superintendence & Evaluation Unit created"],
+      63:["BC Gov – Public Safety: LSBC referrals strengthened"],
+      64:["BC Gov – Public Safety: LSBC evidence-sharing process"],
+      65:["BC Gov – Public Safety: public awareness on oversight"],
 
-      69: ["CPABC Code – Rule on reporting FINTRAC non-compliance"],
-      70: ["BC Gov – Professions: sector analysis of non-CPABC financial pros"],
-      71: ["PCMLTFA – accountants as reporting entities"],
-      72: ["CPABC Rule 219 – Client ID/verification & SOF"],
-      73: ["CPABC Practice Review – trust account usage reviews"],
-      74: ["CPABC Practice Review – sampling (incl. trust accounts)"],
-      75: ["CPABC Discipline/Review – cash acceptance oversight"],
-      77: ["CPABC – declarations re: PCMLTFA-regulated activities"],
-      78: ["CPABC Practice Review – AML compliance integrated"],
-      79: ["CPABC – AML professional development programs"],
-      80: ["CPABC – liaison with FINTRAC"],
-      81: ["CPABC – cooperation with law enforcement"],
+      55:["LSBC – Rule 3-59 cash exception revision process"],
+      56:["LSBC – Client ID/source-of-money guidance updates"],
+      58:["LSBC – Advisory clarifying Rule 3-58.1 (‘directly related’)"],
+      62:["LSBC – Tabled AML training for high-risk lawyers"],
 
-      89: ["BC Gov – Public Safety: police to consider ML at outset"],
-      90: ["BC Gov – Public Safety: ML/asset-seizure training modules"],
-      94: ["BC Gov – Public Safety: CFSEU resourcing"],
-      96: ["BC Gov – Public Safety: police to consider civil forfeiture"],
-      98: ["BC Gov – Public Safety: criminal forfeiture training"],
-      99: ["BC Gov – Public Safety/Civil Forfeiture: CFO capacity expanded"],
+      66:["BC Gov – Lawyers/Notaries: Legal Professions Act (notaries’ fines to $250k)"],
+      67:["FINTRAC/BC Notaries – SOF documentation obligations"],
+      68:["BC Notaries – AML training offerings"],
+
+      69:["CPABC Code – Rule on reporting FINTRAC non-compliance"],
+      70:["BC Gov – Professions: sector analysis of non-CPABC financial pros"],
+      71:["PCMLTFA – accountants as reporting entities"],
+      72:["CPABC Rule 219 – Client ID/verification & SOF"],
+      73:["CPABC Practice Review – trust account usage reviews"],
+      74:["CPABC Practice Review – sampling (incl. trust accounts)"],
+      75:["CPABC Discipline/Review – cash acceptance oversight"],
+      77:["CPABC – declarations re: PCMLTFA-regulated activities"],
+      78:["CPABC Practice Review – AML compliance integrated"],
+      79:["CPABC – AML professional development programs"],
+      80:["CPABC – liaison with FINTRAC"],
+      81:["CPABC – cooperation with law enforcement"],
+
+      89:["BC Gov – Public Safety: police to consider ML at outset"],
+      90:["BC Gov – Public Safety: ML/asset-seizure training modules"],
+      94:["BC Gov – Public Safety: CFSEU resourcing"],
+      96:["BC Gov – Public Safety: police to consider civil forfeiture"],
+      98:["BC Gov – Public Safety: criminal forfeiture training"],
+      99:["BC Gov – Public Safety/Civil Forfeiture: CFO capacity expanded"],
       100:["BC Gov – Public Safety: CFO on government budget model"],
       101:["BC Gov – Civil Forfeiture: Unexplained Wealth Orders enacted/used"],
 
-      52: ["BC Gov – Corporate ownership transparency; federal registry note"],
-
-      // Unknown items intentionally have no sources; tooltip will say “not yet verified”.
+      52:["BC Gov – Corporate ownership transparency; federal registry note"]
     };
 
     /* --- BUILD GRID + TOOLTIP --- */
@@ -351,7 +285,6 @@
     const tooltip = document.getElementById('tooltip');
 
     function autoLink(text){
-      // turns bare URLs into <a href="...">...</a>
       const urlRegex = /(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
       return text.replace(urlRegex, (m) => {
         const url = m.startsWith('http') ? m : `https://${m}`;
@@ -399,8 +332,6 @@
         'Unknown / Unverified';
 
       const recText = recommendations[n-1] || `Recommendation ${n}`;
-
-      // Build sources list for this rec, if any
       const src = sourcesByRec[n];
       let sourcesHTML = '';
       if (status === 'unknown' || !src || src.length === 0) {
@@ -409,7 +340,6 @@
         const items = src.map(s => `<li>${autoLink(s)}</li>`).join('');
         sourcesHTML = `<div class="sources"><span class="sources-title">Sources</span><ul>${items}</ul></div>`;
       }
-
       const tipHTML = `<strong>${recText}</strong><span class="status">Status: ${label}</span>${sourcesHTML}`;
 
       // mouse
@@ -418,22 +348,16 @@
       // keyboard
       cell.addEventListener('focus', () => showTooltip(cell, tipHTML));
       cell.addEventListener('blur', hideTooltip);
-      // touch (tap to show; tap elsewhere to hide)
-      cell.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        showTooltip(cell, tipHTML);
-      }, {passive:false});
+      // touch
+      cell.addEventListener('touchstart', (e) => { e.preventDefault(); showTooltip(cell, tipHTML); }, {passive:false});
 
       grid.appendChild(cell);
     }
 
-    // close tooltip on scroll/resize/escape/tap outside
     window.addEventListener('scroll', hideTooltip, {passive:true});
     window.addEventListener('resize', hideTooltip);
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
-    document.addEventListener('touchstart', (e) => {
-      if (!e.target.closest('.cell')) hideTooltip();
-    }, {passive:true});
+    document.addEventListener('touchstart', (e) => { if (!e.target.closest('.cell')) hideTooltip(); }, {passive:true});
   </script>
 </body>
 </html>
