@@ -33,7 +33,28 @@
       padding:16px;
       box-shadow:0 6px 18px rgba(0,0,0,.2)
     }
-    /* grid will be added in the next step */
+    /* grid styles */
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .cell {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold;
+      color: #000;
+    }
+    .done { background: var(--accent); }
+    .progress { background: var(--warn); }
+    .todo { background: var(--todo); }
   </style>
 </head>
 <body>
