@@ -183,6 +183,45 @@
   window.addEventListener('scroll', hideTooltip, {passive:true});
   window.addEventListener('resize', hideTooltip);
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
+    const grid = document.getElementById("grid");
+
+for (let n = 1; n <= 101; n++) {
+  const recText = recommendations[n - 1] || `Recommendation ${n}`;
+  const status = statusByRec[n] || "unknown";
+  const label = status.charAt(0).toUpperCase() + status.slice(1);
+
+  const cell = document.createElement("div");
+  cell.className = `cell ${status}`;
+  cell.textContent = n;
+  cell.setAttribute("role","button");
+  cell.setAttribute("tabindex","0");
+  cell.setAttribute("aria-label", `${recText} — ${label}`);
+
+  const src = sourcesByRec[n];
+  let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+  if (src && src.length > 0) {
+    html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
+    for (const s of src) {
+      html += `<li>${autoLink(s)}</li>`;
+    }
+    html += `</ul></div>`;
+  } else {
+    html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
+  }
+
+  // tooltip events
+  cell.addEventListener("mouseenter",()=>showTooltip(cell,html));
+  cell.addEventListener("focus",()=>showTooltip(cell,html));
+  cell.addEventListener("mouseleave",hideTooltip);
+  cell.addEventListener("blur",hideTooltip);
+
+  grid.appendChild(cell);
+}
+
+// hide tooltip on scroll/resize/escape
+window.addEventListener("scroll", hideTooltip);
+window.addEventListener("resize", hideTooltip);
+window.addEventListener("keydown", e => { if (e.key === "Escape") hideTooltip(); });
 </script>
     
 
