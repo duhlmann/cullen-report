@@ -57,7 +57,7 @@
 <body>
   <div class="wrap">
     <h1>Cullen Commission — 101 Recommendations Tracker</h1>
-    <p>101 boxes = 101 recommendations. Hover a box to see the text.</p>
+    <p>101 boxes = 101 recommendations. Hover a box to see its status.</p>
 
     <div class="card">
       <div class="legend" aria-hidden="true">
@@ -70,59 +70,45 @@
       <div class="hint">Tip: hover a square to see its label.</div>
     </div>
   </div>
-<script>
-  // --- RECOMMENDATIONS DATA (already correct) ---
-  const recommendations = [
-    "Rec 1: Establish an independent Anti-Money Laundering (AML) Commissioner.",
-    "Rec 2: Keep the Deputy Ministers’ Committee and AML Secretariat.",
-    "Rec 3: Require AML liaison officers across agencies.",
-    // ... keep the rest of the 101 recs exactly as before ...
-    "Rec 101: Develop unexplained wealth order regime in BC."
-  ];
 
-  // --- FIXED STATUS LOOKUP ---
-  // This is just a starter example with a few mapped.
-  // Key = recommendation number, Value = "done" | "progress" | "todo"
-  const statusByRec = {
-    52: "done",       // Beneficial Ownership Registry (completed)
-    5: "done",        // 100% account-based known play at casinos (implemented)
-    101: "done",      // Unexplained Wealth Orders (new regime passed in BC)
-    51: "done",       // MSB regulation under BC FSA
-    33: "done",       // Land Owner Transparency Registry free access
-    84: "progress",   // Vehicle export regulation (in progress)
-    82: "todo",       // Luxury goods universal reporting (not done)
-    70: "todo",       // Study of unregulated accountants (not yet complete)
-  };
+  <script>
+    // --- FIXED STATUS LOOKUP DEMO ---
+    // Key = recommendation number, Value = "done" | "progress" | "todo"
+    const statusByRec = {
+      52: "done",       // Beneficial Ownership Registry
+      5: "done",        // Casinos: account-based known play
+      101: "done",      // Unexplained Wealth Orders
+      51: "done",       // MSB regulation
+      33: "done",       // Land Owner Transparency Registry
+      84: "progress",   // Vehicle export regulation
+      82: "todo",       // Luxury goods reporting
+      70: "todo"        // Study unregulated accountants
+    };
 
-  const grid = document.getElementById('grid');
+    const grid = document.getElementById('grid');
 
-  // --- CREATE CELLS ---
-  for (let idx = 0; idx < recommendations.length; idx++) {
-    const n = idx + 1;
-    const cell = document.createElement('div');
+    // --- CREATE CELLS ---
+    for (let n = 1; n <= 101; n++) {
+      const cell = document.createElement('div');
 
-    // Get status: if not in list, default to "todo"
-    const status = statusByRec[n] || "todo";
+      // Use fixed status if we have one, else default to "todo"
+      const status = statusByRec[n] || "todo";
 
-    cell.className = `cell ${status}`;
-    cell.setAttribute('role', 'gridcell');
-    cell.setAttribute('tabindex', '0');
+      cell.className = `cell ${status}`;
+      cell.textContent = n;
 
-    cell.textContent = n;
+      // Tooltip (for now just the number + status)
+      const label =
+        status === 'done' ? 'Done' :
+        status === 'progress' ? 'In Progress' :
+        'Not Done';
+      cell.title = `Recommendation ${n} — Status: ${label}`;
 
-    const recText = recommendations[idx];
-    const label =
-      status === 'done' ? 'Done' :
-      status === 'progress' ? 'In Progress' :
-      'Not Done';
-    cell.title = `${recText} — Status: ${label}`;
-
-    grid.appendChild(cell);
-  }
-</script>
-
-  
+      grid.appendChild(cell);
+    }
+  </script>
 </body>
 </html>
-
+   
+  
   
