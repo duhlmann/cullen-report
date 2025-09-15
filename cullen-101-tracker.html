@@ -299,15 +299,11 @@
   
       const src = sourcesByRec[n];
 
-      let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+     let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
 if (src && src.length > 0) {
   html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
-  if (src && src.length > 0) {
-  html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
   for (const s of src) {
-    const isNote = s.trim().toLowerCase().startsWith('note:');
-    const body = isNote ? s.replace(/^note:\s*/i, '') : s;
-    html += `<li class="${isNote ? 'note-item' : ''}">${isNote ? '<strong>Note:</strong> ' : ''}${autoLink(body)}</li>`;
+    html += `<li>${autoLink(s)}</li>`;
   }
   html += `</ul></div>`;
 } else {
