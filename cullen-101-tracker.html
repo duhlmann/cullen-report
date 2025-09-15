@@ -12,7 +12,8 @@
     }
     html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
     .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
-    h1{margin:0 0 8px} p{color:var(--muted);margin:0 0 16px}
+    h1{margin:0 0 8px}
+    p{color:var(--muted);margin:0 0 16px}
     .card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
     .legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
     .legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
@@ -20,10 +21,21 @@
     #grid{display:grid;grid-template-columns: repeat(10, 1fr);gap:6px;margin-top:12px}
     .cell{width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:#000;user-select:none;outline:none}
     .cell:focus{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
-    .done{background:var(--accent)} .progress{background:var(--warn)} .todo{background:var(--todo)} .unknown{background:var(--unknown);color:#fff}
+    .done{background:var(--accent)}
+    .progress{background:var(--warn)}
+    .todo{background:var(--todo); color:#fff;} /* improved contrast on red */
+    .unknown{background:var(--unknown);color:#fff}
     .note{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.4}
-    .tooltip{position:fixed;z-index:9999;max-width:min(520px,92vw);background:var(--tooltip);color:var(--tooltip-text);padding:10px 12px;border-radius:10px;box-shadow:var(--tooltip-shadow);font-size:12px;line-height:1.35;display:none;pointer-events:none}
-    .tooltip strong{font-weight:600}.tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
+    .tooltip{
+      position:fixed; /* viewport-relative; don't add scroll offsets in JS */
+      z-index:9999;
+      max-width:min(520px,92vw);
+      background:var(--tooltip);color:var(--tooltip-text);
+      padding:10px 12px;border-radius:10px;box-shadow:var(--tooltip-shadow);
+      font-size:12px;line-height:1.35;display:none;pointer-events:none
+    }
+    .tooltip strong{font-weight:600}
+    .tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
     .tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
     .tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
     .tooltip .sources ul{margin:0;padding-left:16px}
@@ -226,34 +238,67 @@
 
     function autoLink(text){
       const urlRegex=/(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
-      return text.replace(urlRegex,(m)=>{const url=m.startsWith('http')?m:`https://${m}`;return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`});
+      return text.replace(urlRegex,(m)=>{
+        const url=m.startsWith('http')?m:`https://${m}`;
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`;
+      });
     }
+
     function showTooltip(target, html){
-      tooltip.innerHTML=html; tooltip.style.display='block'; tooltip.setAttribute('aria-hidden','false');
-      const rect=target.getBoundingClientRect(); const pad=8; const ttRect=tooltip.getBoundingClientRect();
-      let top=rect.top-ttRect.height-pad; if(top<8) top=rect.bottom+pad;
-      let left=rect.left+(rect.width-ttRect.width)/2; left=Math.max(8,Math.min(left,window.innerWidth-ttRect.width-8));
-      tooltip.style.top=`${top+window.scrollY}px`; tooltip.style.left=`${left+window.scrollX}px`;
+      tooltip.innerHTML = html;
+      tooltip.style.display = 'block';
+      tooltip.setAttribute('aria-hidden','false');
+
+      const rect = target.getBoundingClientRect();
+      const pad = 8;
+      const ttRect = tooltip.getBoundingClientRect();
+
+      let top = rect.top - ttRect.height - pad;
+      if (top < 8) top = rect.bottom + pad;
+
+      let left = rect.left + (rect.width - ttRect.width) / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
+
+      // position:fixed => no scroll offsets added
+      tooltip.style.top = `${top}px`;
+      tooltip.style.left = `${left}px`;
+
+      target.setAttribute('aria-describedby','tooltip');
     }
-    function hideTooltip(){ tooltip.style.display='none'; tooltip.setAttribute('aria-hidden','true'); tooltip.innerHTML=''; }
 
+    function hideTooltip(){
+      tooltip.style.display = 'none';
+      tooltip.setAttribute('aria-hidden','true');
+      tooltip.innerHTML = '';
+      const active = document.querySelector('[aria-describedby="tooltip"]');
+      if (active) active.removeAttribute('aria-describedby');
+    }
+
+    // Build grid
     for(let n=1;n<=101;n++){
-      const status=statusByRec[n]||"unknown";
-      const cell=document.createElement('div');
-      cell.className=`cell ${status}`; cell.textContent=n; cell.setAttribute('role','gridcell'); cell.setAttribute('tabindex','0');
+      const status = statusByRec[n] || "unknown";
+      const cell = document.createElement('div');
+      cell.className = `cell ${status}`;
+      cell.textContent = n;
+      cell.setAttribute('role','gridcell');
+      cell.setAttribute('tabindex','0');
 
-      const label = status==='done'?'Done (verified)':status==='progress'?'In Progress (verified)':status==='todo'?'Not Done (verified gap)':'Unknown / Unverified';
+      const label =
+        status==='done'     ? 'Done (verified)' :
+        status==='progress' ? 'In Progress (verified)' :
+        status==='todo'     ? 'Not Done (verified gap)' :
+                              'Unknown / Unverified';
+
       const recText = recommendations[n-1] || `Recommendation ${n}`;
-      cell.title = recText; // native tooltip fallback
-  
+      // Remove native title to avoid double tooltips; keep SR label
+      cell.setAttribute('aria-label', recText);
+
       const src = sourcesByRec[n];
 
       let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
       if (src && src.length > 0) {
         html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
-        for (const s of src) {
-          html += `<li>${autoLink(s)}</li>`;
-        }
+        for (const s of src) html += `<li>${autoLink(s)}</li>`;
         html += `</ul></div>`;
       } else {
         html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
@@ -266,9 +311,9 @@
 
       grid.appendChild(cell);
     }
-
-    // hide tooltip on scroll/resize/escape
-    window.addEventListener('scroll', hideTooltip);
+    
+    // Hide tooltip on scroll/resize/escape
+    window.addEventListener('scroll', hideTooltip, { passive: true });
     window.addEventListener('resize', hideTooltip);
     window.addEventListener('keydown', e => { if (e.key === "Escape") hideTooltip(); });
   </script>
@@ -276,19 +321,11 @@
 </html>
 
 
- 
-   
-     
-     
- 
- 
-    
-   
 
- 
+
+
+
+
+
+
      
-      
-    
-
-      
-
