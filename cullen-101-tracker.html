@@ -184,16 +184,14 @@
   }
 </script>
  <script>
-  // super-obvious visual test
-  alert("BOTTOM JS OK");
-
   const grid = document.getElementById('grid');
-  grid.style.border = "3px dashed hotpink";
-  grid.style.minHeight = "120px";
-  grid.style.padding = "8px";
-
-  // insert a big, obvious box
-  grid.innerHTML = '<div style="width:80px;height:80px;background:lime;display:inline-block;line-height:80px;text-align:center;font-weight:700;">1</div>';
+  if (!grid) {
+    alert("❌ No element with id='grid' was found");
+  } else {
+    alert("✅ Found grid element!");
+    grid.style.border = "3px solid red";
+    grid.innerHTML = "Hello from JS";
+  }
 </script>
 </body>
 </html>
