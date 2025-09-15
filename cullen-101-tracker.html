@@ -6,34 +6,61 @@
   <title>Cullen Commission — 101 Recommendations Tracker</title>
   <style>
     :root{
-      --bg:#0b0f19; --card:#121827; --muted:#9aa4b2; --text:#e5e7eb;
-      --accent:#6ee7b7; --warn:#facc15; --todo:#ef4444; --unknown:#6b7280;
-      --tooltip:#111827; --tooltip-text:#e5e7eb; --tooltip-shadow:0 8px 24px rgba(0,0,0,.35); --link:#93c5fd;
+      --bg:#0b0f19;
+      --card:#121827;
+      --muted:#9aa4b2;
+      --text:#e5e7eb;
+      --accent:#6ee7b7;  /* Done (verified) */
+      --warn:#facc15;    /* In Progress (verified) */
+      --todo:#ef4444;    /* Not Done (verified gap) */
+      --unknown:#6b7280; /* Unknown / Unverified */
     }
-    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
-    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
-    h1{margin:0 0 8px} p{color:var(--muted);margin:0 0 16px}
-    .card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
-    .legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-    .legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
-    .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
-    #grid{display:grid;grid-template-columns: repeat(10, 1fr);gap:6px;margin-top:12px}
-    .cell{width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:#000;user-select:none;outline:none}
-    .cell:focus{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
-    .done{background:var(--accent)} .progress{background:var(--warn)} .todo{background:var(--todo)} .unknown{background:var(--unknown);color:#fff}
-    .note{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.4}
-    .tooltip{position:fixed;z-index:9999;max-width:min(520px,92vw);background:var(--tooltip);color:var(--tooltip-text);padding:10px 12px;border-radius:10px;box-shadow:var(--tooltip-shadow);font-size:12px;line-height:1.35;display:none;pointer-events:none}
-    .tooltip strong{font-weight:600}.tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
-    .tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
-    .tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
-    .tooltip .sources ul{margin:0;padding-left:16px}
-    .tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
+    html,body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif
+    }
+    .wrap{ max-width:1100px; margin:24px auto; padding:0 16px }
+    h1{margin:0 0 8px}
+    p{color:var(--muted);margin:0 0 16px}
+    .card{
+      background:var(--card);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 6px 18px rgba(0,0,0,.2)
+    }
+
+    .legend{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:8px }
+    .legend-item{ display:flex; align-items:center; gap:6px; color:var(--muted); font-size:14px }
+    .swatch{ width:14px; height:14px; border-radius:4px; display:inline-block }
+
+    #grid{
+      display:grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap:6px;
+      margin-top:12px;
+    }
+    .cell{
+      width:30px; height:30px; border-radius:6px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-size:10px; font-weight:bold; color:#000; user-select:none;
+      outline:none;
+    }
+    .cell:focus{ box-shadow:0 0 0 2px rgba(255,255,255,.25) }
+    .done{ background:var(--accent) }
+    .progress{ background:var(--warn) }
+    .todo{ background:var(--todo) }
+    .unknown{ background:var(--unknown); color:#fff }
+
+    .hint{ color:var(--muted); font-size:12px; margin-top:10px }
+    .note{ color:var(--muted); font-size:12px; margin-top:10px; line-height:1.4 }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Cullen Commission — 101 Recommendations Tracker</h1>
-    <p>Hover or focus a box to see the full recommendation text, status, and sources. Gray = not yet verified from public sources.</p>
+    <p>Only <strong>verified</strong> items are colored. Gray = not yet verified from public sources.</p>
 
     <div class="card">
       <div class="legend" aria-hidden="true">
@@ -44,121 +71,69 @@
       </div>
 
       <div id="grid" role="grid" aria-label="Cullen recommendations grid"></div>
-      <div class="note">We only color items where we’ve found solid sources. Everything else stays gray until verified.</div>
+      <div class="note">
+        Sources: B.C. “Quick Glance” pages (Corporate ownership transparency, Real estate, Gambling, Financial sector, Public safety, Civil forfeiture), plus BCFSA/MSA updates and the federal BO registry note. We’ll keep adding verified items over time.
+      </div>
     </div>
   </div>
 
-  <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
-
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      alert('JS is running');
-      /* --- Data --- */
-      const recommendations = Array.from({ length: 101 }, (_, i) => `Rec ${i + 1}`);
-      const statusByRec = { 4:"todo", 2:"done", 5:"progress", 25:"done", 33:"done" };
+    // VERIFIED STATUS LOOKUP
+    // Key = recommendation number, Value = "done" | "progress" | "todo"
+    // Everything not listed here defaults to "unknown".
+    const statusByRec = {
+      // --- Corporate / Beneficial ownership ---
+      52: "progress",  // BC legislation and federal registry exist; pan-Canadian integration still underway
+      // Page: corporate ownership transparency (timeline & actions). :contentReference[oaicite:1]{index=1}
 
-      // Each entry is an array of [title, url] pairs (you can add more pairs per rec)
-      const sourcesByRec = {
-        2: [["BC Gov – Public Safety: Deputy Ministers’ Committee on AML maintained","https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"]],
-        4: [["BC Gov – Gambling: Source-of-funds threshold remains $10,000 (Cullen asked for $3,000)","https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"]],
-        5: [["BC Gov – Gambling: Casinos phasing in account-based known play, target 100% by 2029","https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"]]
-      };
+      // --- Real estate / LOTR / Mortgages ---
+      33: "done",      // LOTR search fees eliminated (greater access). :contentReference[oaicite:2]{index=2}
+      25: "done",      // Mortgage brokers/administrators/lenders under PCMLTFA effective Oct 2024. :contentReference[oaicite:3]{index=3}
+      14: "progress",  // Mortgage Services Act (MSA) modernizes licensing/definitions — transition to Oct 13, 2026 in force. :contentReference[oaicite:4]{index=4}
+      17: "progress",  // MSA grants BCFSA rule-making authority (framework approved; in-force Oct 2026). :contentReference[oaicite:5]{index=5}
+      18: "progress",  // MSA creates principal/managing broker accountability. :contentReference[oaicite:6]{index=6}
+      20: "progress",  // MSA provides significant penalties. :contentReference[oaicite:7]{index=7}
 
-      /* --- DOM refs --- */
-      const grid = document.getElementById('grid');
-      const tooltip = document.getElementById('tooltip');
+      // --- Gambling ---
+      5:  "progress",  // Roadmap to 100% account-based known play by 2029; AML monitoring rollout 2024–25. :contentReference[oaicite:8]{index=8}
+      4:  "todo",      // SOF declaration threshold remains $10,000 (Cullen asked for $3,000). :contentReference[oaicite:9]{index=9}
 
-      /* --- Helpers --- */
-      function escapeHTML(str){
-        return String(str).replace(/[&<>"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]));
-      }
-      function showTooltip(target, html){
-        tooltip.innerHTML = html;
-        tooltip.style.display = 'block';
-        tooltip.setAttribute('aria-hidden','false');
-        const rect = target.getBoundingClientRect();
-        const pad = 8;
-        const ttRect = tooltip.getBoundingClientRect();
-        let top = rect.top - ttRect.height - pad;
-        if (top < 8) top = rect.bottom + pad;
-        let left = rect.left + (rect.width - ttRect.width)/2;
-        left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
-        tooltip.style.top = `${top + window.scrollY}px`;
-        tooltip.style.left = `${left + window.scrollX}px`;
-      }
-      function hideTooltip(){
-        tooltip.style.display = 'none';
-        tooltip.setAttribute('aria-hidden','true');
-        tooltip.innerHTML = '';
-      }
-      function renderSources(recNum){
-        const src = sourcesByRec[recNum];
-        let out = `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
-        if (Array.isArray(src) && src.length){
-          for (const pair of src){
-            if (Array.isArray(pair)){
-              const [label, url] = pair;
-              out += `<li>${escapeHTML(label)} — <a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(url)}</a></li>`;
-            } else {
-              // fallback if someone passes a plain string
-              out += `<li>${escapeHTML(pair)}</li>`;
-            }
-          }
-        } else {
-          out += `<li><em>not yet verified</em></li>`;
-        }
-        out += `</ul></div>`;
-        return out;
-      }
+      // --- Financial sector (MSBs & vehicles) ---
+      51: "progress",  // Money Services Businesses Act introduced; comes into force by regulation. :contentReference[oaicite:10]{index=10}
+      85: "done",      // PST refund loophole on exported vehicles eliminated. :contentReference[oaicite:11]{index=11}
+      // (84 left unverified — conservative)
 
-      /* --- Build the grid --- */
-      for (let n = 1; n <= 101; n++) {
-        const status = statusByRec[n] || "unknown";
-        const cell = document.createElement('div');
-        cell.className = `cell ${status}`;
-        cell.textContent = n;
-        cell.setAttribute('role','gridcell');
-        cell.setAttribute('tabindex','0');
+      // --- Public safety / coordination ---
+      91: "done",      // Superintendence & Evaluation Unit created to collect ML investigation metrics. :contentReference[oaicite:12]{index=12}
+      63: "progress",  // Stronger LSBC–police referrals/collaboration. :contentReference[oaicite:13]{index=13}
+      64: "progress",  // Ditto cluster. :contentReference[oaicite:14]{index=14}
+      65: "progress",  // Ditto cluster. :contentReference[oaicite:15]{index=15}
 
-        const label =
-          status === 'done' ? 'Done (verified)' :
-          status === 'progress' ? 'In Progress (verified)' :
-          status === 'todo' ? 'Not Done (verified gap)' :
-          'Unknown / Unverified';
+      // --- Civil forfeiture ---
+      101: "done",     // Unexplained Wealth Orders regime enacted & used (multiple filings). :contentReference[oaicite:16]{index=16}
+      99: "progress"   // Civil Forfeiture Office capacity expanded. :contentReference[oaicite:17]{index=17}
+    };
 
-        const recText = recommendations[n-1] || `Recommendation ${n}`;
-        cell.title = recText; // native tooltip fallback
+    const grid = document.getElementById('grid');
 
-        let html = `<strong>${escapeHTML(recText)}</strong><span class="status">${label}</span>`;
-        html += renderSources(n);
+    // CREATE CELLS (default to "unknown" unless verified above)
+    for (let n = 1; n <= 101; n++) {
+      const status = statusByRec[n] || "unknown";
+      const cell = document.createElement('div');
+      cell.className = `cell ${status}`;
+      cell.textContent = n;
 
-        cell.addEventListener('mouseenter', () => showTooltip(cell, html));
-        cell.addEventListener('focus', () => showTooltip(cell, html));
-        cell.addEventListener('mouseleave', hideTooltip);
-        cell.addEventListener('blur', hideTooltip);
+      const label =
+        status === 'done' ? 'Done (verified)' :
+        status === 'progress' ? 'In Progress (verified)' :
+        status === 'todo' ? 'Not Done (verified gap)' :
+        'Unknown / Unverified';
 
-        grid.appendChild(cell);
-      }
-
-      window.addEventListener('scroll', hideTooltip, {passive:true});
-      window.addEventListener('resize', hideTooltip);
-      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
-    });
- 
-<script>
-  // draw one green cell so we know the grid works
-  const grid = document.getElementById('grid');
-  grid.innerHTML = ''; // clear anything old
-
-  const cell = document.createElement('div');
-  cell.className = 'cell done'; // green
-  cell.textContent = '1';
-  cell.setAttribute('tabindex','0');
-
-
-<script>
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '<div style="width:40px; height:40px; background:green; margin:2px;">1</div>';
-</script>
+      cell.title = `Recommendation ${n} — ${label}`;
+      grid.appendChild(cell);
+    }
+  </script>
 </body>
-</html>       
+</html>
+     
+     
