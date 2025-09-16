@@ -49,6 +49,18 @@
     .tooltip .sources ul{margin:0;padding-left:16px}
     .tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
     .tooltip a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+    /* Step 1: brighten tooltip links for contrast */
+.tooltip a,
+.tooltip a:visited {
+  color: #66b3ff !important;   /* brighter blue */
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.tooltip a:hover,
+.tooltip a:focus {
+  text-decoration-thickness: 2px;  /* thicker underline on hover/focus */
+}
   </style>
 </head>
 
