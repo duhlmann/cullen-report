@@ -46,7 +46,7 @@
 
     /* Tooltip base */
     .tooltip {
-      position:fixed;   /* positioned dynamically by JS */
+      position:fixed;
       z-index:9999;
       max-width:min(520px,92vw);
       background:var(--tooltip);
@@ -56,41 +56,22 @@
       box-shadow:var(--tooltip-shadow);
       font-size:12px;
       line-height:1.35;
-      display:none;        /* hidden by default */
-      pointer-events:auto; /* allow clicking inside */
+      display:none;
+      pointer-events:none;
     }
     .tooltip strong {font-weight:600}
-    .tooltip .status {
-      opacity:.9;
-      font-style:italic;
-      display:block;
-      margin-top:6px;
-    }
-    .tooltip .sources {
-      margin-top:8px;
-      border-top:1px solid rgba(255,255,255,.08);
-      padding-top:6px;
-    }
-    .tooltip .sources-title {
-      font-size:11px;
-      opacity:.8;
-      margin-bottom:4px;
-      display:block;
-    }
+    .tooltip .status {opacity:.9;font-style:italic;display:block;margin-top:6px}
+    .tooltip .sources {margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
+    .tooltip .sources-title {font-size:11px;opacity:.8;margin-bottom:4px;display:block}
     .tooltip .sources ul {margin:0;padding-left:16px}
-    .tooltip a {
-      color:var(--link);
-      text-decoration:underline;
-      word-break:break-word;
-    }
+    .tooltip a {color:var(--link);text-decoration:underline;word-break:break-word}
 
-    /* Show tooltips via .open class (set in JS) */
-    .tooltip.open {
+    /* Original hover behaviour */
+    .cell:hover .tooltip {
       display:block;
     }
   </style>
 </head>
-
 <body>
   <h1>Cullen Commission — 101 Recommendations Tracker</h1>
   <p>Hover or focus a box to see the full recommendation text, status, and sources. Gray = not yet verified from public sources.</p>
