@@ -39,13 +39,23 @@
       padding:10px 12px;border-radius:10px;box-shadow:var(--tooltip-shadow);
       font-size:12px;line-height:1.35;display:none;pointer-events:none
     }
-    .tooltip strong{font-weight:600}
-    .tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
-    .tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
-    .tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
-    .tooltip .sources ul{margin:0;padding-left:16px}
-    .tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
-  </style>
+  .tooltip strong{font-weight:600}
+.tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
+.tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
+.tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
+.tooltip .sources ul{margin:0;padding-left:16px}
+.tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
+
+/* 👇 NEW FIX 👇 */
+.tooltip {
+  pointer-events: auto; /* allow links to be clickable */
+}
+.cell:hover .tooltip,
+.tooltip:hover {
+  display: block; /* keep tooltip open when hovering inside */
+}
+/* 👆 NEW FIX 👆 */
+</style>
 </head>
 <body>
   <div class="wrap">
