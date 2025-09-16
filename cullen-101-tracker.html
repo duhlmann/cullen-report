@@ -171,23 +171,26 @@
     "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
   ]
 };
-   // NOTES — show notes under Sources
-const notes = notesByRec[recId];
-if (notes) {
-  const arr = Array.isArray(notes) ? notes : [notes];
-  // IMPORTANT: change 'panel' below to the SAME name your Sources used
-  panel.innerHTML += `
-    <h4 class="subhead">Notes</h4>
-    <ul class="notes">${arr.map(n => `<li>${n}</li>`).join('')}</ul>
-  `;
-}
+   // SAFER NOTES helper — it does nothing until you CALL it
+function renderNotes(recId) {
+  try {
+    if (!recId || !window.notesByRec) return;
+
     const notes = notesByRec[recId];
-if (notes) {
-  panel.innerHTML += `
-    <h4 class="subhead">Notes</h4>
-    <ul>${(Array.isArray(notes) ? notes : [notes])
-      .map(n => `<li>${n}</li>`).join("")}</ul>
-  `;
+    if (!notes) return;
+
+    // find the right-side detail box (works with common names)
+    const box = document.querySelector('#detail, .detail, #panel, .panel, #sidebar, .sidebar');
+    if (!box) return;
+
+    const arr = Array.isArray(notes) ? notes : [notes];
+    box.insertAdjacentHTML('beforeend', `
+      <h4 class="subhead">Notes</h4>
+      <ul class="notes">${arr.map(n => `<li>${n}</li>`).join('')}</ul>
+    `);
+  } catch (e) {
+    // silently skip if anything is weird
+  }
 }
 
 
