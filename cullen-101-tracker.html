@@ -330,36 +330,41 @@
       } else {
         html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
       }
+// OPEN tooltip on hover/focus
+cell.addEventListener('mouseenter', () => showTooltip(cell, html));
+cell.addEventListener('focus', () => showTooltip(cell, html));
 
-      // OPEN tooltip on hover/focus
-      cell.addEventListener('mouseenter',()=>showTooltip(cell,html));
-      cell.addEventListener('focus',()=>showTooltip(cell,html));
+// CLOSE only if moving to somewhere that's NOT the tooltip
+cell.addEventListener('mouseleave', (e) => {
+  const to = e.relatedTarget;
+  if (to && (to === tooltip || tooltip.contains(to))) {
+    return; // moved into tooltip → keep open
+  }
+  hideTooltip();
+});
 
-      // CLOSE only if moving to somewhere that's NOT the tooltip
-      cell.addEventListener('mouseleave',(e)=>{
-        const to = e.relatedTarget;
-        if (to && (to === tooltip || tooltip.contains(to))) return; // moved into tooltip: keep open
-        hideTooltip();
-      });
-      cell.addEventListener('blur',hideTooltip);
+// CLOSE on blur, but only if not hovering tooltip
+cell.addEventListener('blur', () => {
+  if (tooltip.matches(':hover')) return;
+  hideTooltip();
+});
 
-      grid.appendChild(cell);
-    }
+grid.appendChild(cell);
+}
 
-    // If you leave the tooltip to anywhere that's not back to a cell, hide it
-    tooltip.addEventListener('mouseleave',(e)=>{
-      const to = e.relatedTarget;
-      if (to && grid.contains(to)) return; // moved back to a cell: keep open
-      hideTooltip();
-    });
-    tooltip.addEventListener('mouseenter',()=>{ /* keep open while inside */ });
+// If you leave the tooltip to anywhere that's not back to a cell, hide it
+tooltip.addEventListener('mouseleave', (e) => {
+  const to = e.relatedTarget;
+  if (to && grid.contains(to)) return; // moved back to a cell → keep open
+  hideTooltip();
+});
 
-    // Hide on scroll/resize/escape
-    window.addEventListener('scroll', hideTooltip, { passive: true });
-    window.addEventListener('resize', hideTooltip);
-    window.addEventListener('keydown', e => { if (e.key === "Escape") hideTooltip(); });
-  </script>
-</body>
-</html>
+// Keep tooltip open while inside it
+tooltip.addEventListener('mouseenter', () => {
+  /* do nothing, just stay open */
+});
 
-  
+// Hide on scroll/resize/escape
+window.addEventListener('scroll', hideTooltip, { passive: true });
+window.addEventListener('resize', hideTooltip);
+window.addEventListener('keydown', e => { if (e.key === "Escape") hideTooltip(); });
