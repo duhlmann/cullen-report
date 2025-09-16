@@ -1,9 +1,8 @@
-<!doctype html>
-<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cullen Commission — 101 Recommendations Tracker</title>
+
   <style>
     :root{
       --bg:#0b0f19; --card:#121827; --muted:#9aa4b2; --text:#e5e7eb;
@@ -11,12 +10,6 @@
       --tooltip:#111827; --tooltip-text:#e5e7eb; --tooltip-shadow:0 8px 24px rgba(0,0,0,.35); --link:#93c5fd;
     }
 
-    /* Keep tooltip open when hovering on number OR inside tooltip */
-    .number:hover .tooltip,
-    .tooltip:hover {
-      display: block; /* or visibility: visible if that’s how your tooltip works */
-    }
-</style>
     html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
     .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
     h1{margin:0 0 8px}
@@ -26,36 +19,42 @@
     .legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
     .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
     #grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:12px}
-    .cell{width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:#000;user-select:none;outline:none}
+    .cell{width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:#000;user-select:none;outline:none;position:relative}
     .cell:focus{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
     .done{background:var(--accent)}
     .progress{background:var(--warn)}
     .todo{background:var(--todo);color:#fff}
     .unknown{background:var(--unknown);color:#fff}
     .note{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.4}
-    .tooltip{
-      position:fixed;z-index:9999;max-width:min(520px,92vw);
-      background:var(--tooltip);color:var(--tooltip-text);
-      padding:10px 12px;border-radius:10px;box-shadow:var(--tooltip-shadow);
-      font-size:12px;line-height:1.35;display:none;pointer-events:none
-    }
-  .tooltip strong{font-weight:600}
-.tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
-.tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
-.tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
-.tooltip .sources ul{margin:0;padding-left:16px}
-.tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
 
-/* 👇 NEW FIX 👇 */
-.tooltip {
-  pointer-events: auto; /* allow links to be clickable */
-}
-.cell:hover .tooltip,
-.tooltip:hover {
-  display: block; /* keep tooltip open when hovering inside */
-}
-/* 👆 NEW FIX 👆 */
-</style>
+    /* Tooltip base */
+    .tooltip{
+      position:fixed;              /* your original choice; JS likely positions it */
+      z-index:9999;
+      max-width:min(520px,92vw);
+      background:var(--tooltip);
+      color:var(--tooltip-text);
+      padding:10px 12px;
+      border-radius:10px;
+      box-shadow:var(--tooltip-shadow);
+      font-size:12px;
+      line-height:1.35;
+      display:none;                /* hidden by default */
+      pointer-events:auto;         /* IMPORTANT: allow clicks inside */
+    }
+    .tooltip strong{font-weight:600}
+    .tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
+    .tooltip .sources{margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
+    .tooltip .sources-title{font-size:11px;opacity:.8;margin-bottom:4px;display:block}
+    .tooltip .sources ul{margin:0;padding-left:16px}
+    .tooltip a{color:var(--link);text-decoration:underline;word-break:break-word}
+
+    /* Keep tooltip visible when hovering number OR the tooltip itself */
+    .cell:hover .tooltip,
+    .tooltip:hover{
+      display:block;
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
