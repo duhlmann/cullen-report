@@ -10,7 +10,7 @@
       --bg:#0b0f19; --card:#121827; --muted:#9aa4b2; --text:#e5e7eb;
       --accent:#6ee7b7; --warn:#facc15; --todo:#ef4444; --unknown:#6b7280;
       --tooltip:#111827; --tooltip-text:#e5e7eb; --tooltip-shadow:0 8px 24px rgba(0,0,0,.35);
-      --link:#66b3ff; /* brighter for contrast */
+      --link:#66b3ff; /* bright, readable */
     }
 
     html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
@@ -40,7 +40,7 @@
       background:var(--tooltip); color:var(--tooltip-text);
       padding:10px 12px; border-radius:10px; box-shadow:var(--tooltip-shadow);
       font-size:12px; line-height:1.35; display:none;
-      pointer-events:auto;
+      pointer-events:auto; /* allow clicking inside */
     }
     .tooltip strong{font-weight:600}
     .tooltip .status{opacity:.9;font-style:italic;display:block;margin-top:6px}
@@ -76,35 +76,97 @@
   <div id="tooltip" class="tooltip" role="dialog" aria-hidden="true"></div>
 
   <script>
-    /* --- Full recommendation texts --- */
-    const recommendations = [
-      "Rec 1: Establish an independent Anti-Money Laundering (AML) Commissioner.",
-      "Rec 2: Maintain the Deputy Ministers’ Committee on AML and the AML Secretariat.",
-      "Rec 3: Require AML liaison officers across agencies.",
-      "Rec 4: Lower casino source-of-funds threshold to $3,000.",
-      "Rec 5: Implement 100% account-based known play at casinos.",
-      // ... (leave the rest of your recs here, unchanged) ...
-      "Rec 101: Develop unexplained wealth order regime in BC."
-    ];
+    /* ---------- Minimal data helpers (no huge arrays needed) ---------- */
 
-    const statusByRec = {1:"unknown",4:"todo",25:"done",33:"done",52:"progress",69:"done",71:"done",72:"done",78:"done",85:"done",89:"done",91:"done",96:"done",100:"done",101:"done"};
+    // Titles only for a few known recs; others auto-fill "Recommendation n"
+    const recTitle = {
+      1: "Rec 1: Establish an independent Anti-Money Laundering (AML) Commissioner.",
+      2: "Rec 2: Maintain the Deputy Ministers’ Committee on AML and the AML Secretariat.",
+      3: "Rec 3: Require AML liaison officers across agencies.",
+      4: "Rec 4: Lower casino source-of-funds threshold to $3,000.",
+      5: "Rec 5: Implement 100% account-based known play at casinos."
+      // (others will fall back to generic)
+    };
+    function getRecText(n){ return recTitle[n] || `Recommendation ${n}`; }
 
+    // Status classes for selected recs
+    const statusByRec = {
+      1:"unknown",2:"unknown",3:"unknown",4:"todo",
+      25:"done",33:"done",52:"progress",69:"done",71:"done",72:"done",78:"done",
+      85:"done",89:"done",91:"done",96:"done",100:"done",101:"done"
+    };
+    function statusLabel(cls){
+      return cls==='done'?'Done (verified)'
+           :cls==='progress'?'In Progress (verified)'
+           :cls==='todo'?'Not Done (verified gap)'
+           :'Unknown / Unverified';
+    }
+
+    // Source links for a few recs (sparse object is fine)
     const sourcesByRec = {
-      1:[
+      1: [
         "Premier says no AML 'czar'; government not creating an independent AML Commissioner",
         "https://www.vancouverisawesome.com/highlights/bc-premier-ditches-chief-anti-money-laundering-recommendation-8359675"
       ],
-      4:[
+      4: [
         "BC Gov — Gambling: Proof of source-of-funds threshold remains at $10,000 (not lowered to $3,000 as Cullen recommended)",
         "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/gambling"
       ],
-      25:[
+      25: [
         "BC Gov – Real Estate: mortgage brokers/lenders under PCMLTFA (Oct 2024)",
         "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
+      ],
+      33: [
+        "BC Gov – Real Estate: LOTR fees removed for AML/law enforcement access",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/real-estate"
+      ],
+      52: [
+        "BC Gov – Corporate Transparency: support for pan-Canadian beneficial ownership registry",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/corporate-ownership-transparency"
+      ],
+      69: [
+        "CPABC Code: members must report FINTRAC non-compliance",
+        "https://www.bccpa.ca/news-events/latest-news/2021/06/23/cpabc-releases-new-anti-money-laundering-guidance"
+      ],
+      71: [
+        "PCMLTFA – accountants as reporting entities",
+        "https://www.fintrac-canafe.gc.ca/guidance-directives/overview-apercu/pcmltfa-lrpcfat/pcmltfa-lrpcfat-eng"
+      ],
+      72: [
+        "CPABC Rule 219 – Client ID/verification & source-of-funds",
+        "https://www.bccpa.ca/members/practice-regulations/client-identification-verification"
+      ],
+      78: [
+        "CPABC Practice Review – AML compliance integrated",
+        "https://www.bccpa.ca/members/practice-regulations/practice-review"
+      ],
+      85: [
+        "BC Gov – Financial Sector: export-vehicle refund loophole closed",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/financial-sector"
+      ],
+      89: [
+        "BC Gov – Public Safety: Police consider ML at outset of profit-driven crime",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      91: [
+        "BC Gov – Public Safety: Superintendence & Evaluation Unit created",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      96: [
+        "BC Gov – Public Safety: Consider civil asset forfeiture in profit-motivated crimes",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      100: [
+        "BC Gov – Public Safety: Civil Forfeiture Office to gov’t budget model",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
+      ],
+      101: [
+        "BC Gov – Civil Forfeiture: Unexplained Wealth Orders enacted and in use",
+        "https://www2.gov.bc.ca/gov/content/justice/anti-money-laundering/quick-glance-government-actions/public-safety"
       ]
-      // ... (keep the rest of your sourcesByRec as you had them) ...
     };
 
+    /* ---------- Tooltip + rendering ---------- */
     const grid = document.getElementById('grid');
     const tooltip = document.getElementById('tooltip');
 
@@ -112,85 +174,108 @@
     function clearHideTimer(){ if(hideTimer){ clearTimeout(hideTimer); hideTimer=null; } }
 
     function scheduleHideIfOutside(to){
-      if(to && (to===tooltip || tooltip.contains(to))) return;
+      // If moving into tooltip, don't hide
+      if (to && (to===tooltip || tooltip.contains(to))) return;
       clearHideTimer();
-      hideTimer=setTimeout(()=>{
-        if(tooltip.matches(':hover')) return;
+      hideTimer = setTimeout(()=>{
+        if (tooltip.matches(':hover')) return; // still over tooltip
         hideTooltip();
-      },180);
+      }, 180); // small grace period
     }
 
     function autoLink(text){
       const urlRegex=/(https?:\/\/[^\s)]+)|((?:www\.)[^\s)]+)/gi;
       return text.replace(urlRegex,(m)=>{
-        const url=m.startsWith('http')?m:`https://${m}`;
+        const url = m.startsWith('http') ? m : `https://${m}`;
         return `<a href="${url}" target="_blank" rel="noopener noreferrer">${m}</a>`;
       });
     }
 
     function showTooltip(target, html){
       clearHideTimer();
-      tooltip.innerHTML=html;
-      tooltip.style.display='block';
+      tooltip.innerHTML = html;
+      tooltip.style.display = 'block';
       tooltip.setAttribute('aria-hidden','false');
-      const rect=target.getBoundingClientRect(), pad=8;
-      const ttRect=tooltip.getBoundingClientRect();
-      let top=rect.top-ttRect.height-pad; if(top<8) top=rect.bottom+pad;
-      let left=rect.left+(rect.width-ttRect.width)/2;
-      left=Math.max(8,Math.min(left,window.innerWidth-ttRect.width-8));
-      tooltip.style.top=`${top}px`;
-      tooltip.style.left=`${left}px`;
+
+      const rect = target.getBoundingClientRect();
+      const pad = 8;
+      const ttRect = tooltip.getBoundingClientRect();
+
+      let top = rect.top - ttRect.height - pad;
+      if (top < 8) top = rect.bottom + pad;
+
+      let left = rect.left + (rect.width - ttRect.width) / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - ttRect.width - 8));
+
+      tooltip.style.top = `${top}px`;
+      tooltip.style.left = `${left}px`;
+
       target.setAttribute('aria-describedby','tooltip');
     }
 
     function hideTooltip(){
       clearHideTimer();
-      tooltip.style.display='none';
+      tooltip.style.display = 'none';
       tooltip.setAttribute('aria-hidden','true');
-      tooltip.innerHTML='';
-      const active=document.querySelector('[aria-describedby="tooltip"]');
-      if(active) active.removeAttribute('aria-describedby');
+      tooltip.innerHTML = '';
+      const active = document.querySelector('[aria-describedby="tooltip"]');
+      if (active) active.removeAttribute('aria-describedby');
     }
 
-    // Build grid
+    // Build grid (1..101)
     for(let n=1;n<=101;n++){
-      const status=statusByRec[n]||"unknown";
-      const cell=document.createElement('div');
-      cell.className=`cell ${status}`;
-      cell.textContent=n;
+      const status = statusByRec[n] || "unknown";
+      const cell = document.createElement('div');
+      cell.className = `cell ${status}`;
+      cell.textContent = n;
       cell.setAttribute('role','gridcell');
       cell.setAttribute('tabindex','0');
-      const recText=recommendations[n-1]||`Recommendation ${n}`;
-      cell.setAttribute('aria-label',recText);
-      const src=sourcesByRec[n];
-      let html=`<strong>${recText}</strong><span class="status">${status}</span>`;
-      if(src&&src.length>0){
-        html+=`<div class="sources"><span class="sources-title">Sources:</span><ul>`;
-        for(const s of src) html+=`<li>${autoLink(s)}</li>`;
-        html+=`</ul></div>`;
+
+      const recText = getRecText(n);
+      const label   = statusLabel(status);
+      const src     = sourcesByRec[n];
+
+      let html = `<strong>${recText}</strong><span class="status">${label}</span>`;
+      if (src && src.length > 0) {
+        html += `<div class="sources"><span class="sources-title">Sources:</span><ul>`;
+        for (const s of src) html += `<li>${autoLink(s)}</li>`;
+        html += `</ul></div>`;
       } else {
-        html+=`<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
+        html += `<div class="sources"><span class="sources-title">Sources:</span><ul><li><em>not yet verified</em></li></ul></div>`;
       }
-      cell.addEventListener('mouseenter',()=>showTooltip(cell,html));
-      cell.addEventListener('focus',()=>showTooltip(cell,html));
-      cell.addEventListener('mouseleave',(e)=>scheduleHideIfOutside(e.relatedTarget));
-      cell.addEventListener('blur',()=>scheduleHideIfOutside(document.activeElement));
+
+      // Show on hover/focus
+      cell.addEventListener('mouseenter', ()=>showTooltip(cell, html));
+      cell.addEventListener('focus',     ()=>showTooltip(cell, html));
+
+      // Start hide timer when leaving the cell (gives time to move into tooltip)
+      cell.addEventListener('mouseleave', (e)=>scheduleHideIfOutside(e.relatedTarget));
+      // On blur, also schedule hide (mouse-over tooltip cancels it)
+      cell.addEventListener('blur', ()=>scheduleHideIfOutside(document.activeElement));
+
       grid.appendChild(cell);
     }
 
-    tooltip.addEventListener('mouseenter',clearHideTimer);
-    tooltip.addEventListener('mouseleave',(e)=>scheduleHideIfOutside(e.relatedTarget));
-    window.addEventListener('scroll',hideTooltip,{passive:true});
-    window.addEventListener('resize',hideTooltip);
-    window.addEventListener('keydown',e=>{if(e.key==="Escape")hideTooltip();});
+    // Keep tooltip open while inside it; cancel pending hide
+    tooltip.addEventListener('mouseenter', clearHideTimer);
+    // Hide if leaving tooltip to anywhere not back to a cell
+    tooltip.addEventListener('mouseleave', (e)=>{
+      const to = e.relatedTarget;
+      if (to && grid.contains(to)) return; // went back to a cell
+      scheduleHideIfOutside(to);
+    });
+
+    // Hide on scroll/resize/escape
+    window.addEventListener('scroll', hideTooltip, { passive:true });
+    window.addEventListener('resize', hideTooltip);
+    window.addEventListener('keydown', e => { if (e.key === "Escape") hideTooltip(); });
   </script>
 </body>
 </html>
 
-  
-
-  
-      
+   
+    
+     
      
       
      
