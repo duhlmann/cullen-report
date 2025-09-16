@@ -10,6 +10,13 @@
       --accent:#6ee7b7; --warn:#facc15; --todo:#ef4444; --unknown:#6b7280;
       --tooltip:#111827; --tooltip-text:#e5e7eb; --tooltip-shadow:0 8px 24px rgba(0,0,0,.35); --link:#93c5fd;
     }
+
+    /* Keep tooltip open when hovering on number OR inside tooltip */
+    .number:hover .tooltip,
+    .tooltip:hover {
+      display: block; /* or visibility: visible if that’s how your tooltip works */
+    }
+</style>
     html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
     .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
     h1{margin:0 0 8px}
