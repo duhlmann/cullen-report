@@ -181,6 +181,15 @@ if (notes) {
     <ul class="notes">${arr.map(n => `<li>${n}</li>`).join('')}</ul>
   `;
 }
+    const notes = notesByRec[recId];
+if (notes) {
+  panel.innerHTML += `
+    <h4 class="subhead">Notes</h4>
+    <ul>${(Array.isArray(notes) ? notes : [notes])
+      .map(n => `<li>${n}</li>`).join("")}</ul>
+  `;
+}
+
 
     /* ---------- Tooltip + rendering ---------- */
     const grid = document.getElementById('grid');
